@@ -32,7 +32,7 @@ export default {
 <style>
   .mainmenu{
     border-right: 1px solid #bbb;
-    height: 80vh;
+    height: 85vh;
   }
   .mainmenu h4{
     color: #fff;
@@ -63,7 +63,7 @@ export default {
     text-align: left;
     padding-left: 25px;
     font-family: "微软雅黑";
-    letter-spacing: 1.5px;
+    letter-spacing: 0.5px;
   } 
   .mainmenu ul li a.router-link-active{
     background-color: #286090;

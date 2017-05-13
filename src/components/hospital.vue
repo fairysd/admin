@@ -3,11 +3,11 @@
     <div class="col-sm-12">
       <div class="col-sm-3  title">
         <h4>院方</h4>
-        <input type="text" class="form-control">
+        <input type="text" class="form-control" v-model="searchmsg">
         <button data-target="#hospitalInfo" data-toggle="modal" class="btn btn-primary" id="btnAdd">新增</button>
       </div>
       <div class="col-sm-2  col-sm-push-7 search">
-        <button class="btn btn-primary">查询</button>
+        <button @click="serchHospital()" class="btn btn-primary">查询</button>
       </div>
     </div>
     <div class="col-sm-12">
@@ -126,7 +126,7 @@
             </div>
             <div class="modal-footer">
                 <label id="error" class="label-danger " v-bind:class="{hidden:hospitalInfos.hospitalName&&hospitalInfos.contactName }">请输入红框标出的是必填项！</label>
-                <button @click="addhospital()" type="button" id="btnConfirm" class="btn btn-primary">确认</button>
+                <button @click="addhospital()" type="button" id="btnConfirm" class="btn btn-primary" v-bind:class="{disabled:!(hospitalInfos.hospitalName&&hospitalInfos.contactName) }">确认</button>
                 <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
@@ -494,8 +494,47 @@ export default {
   
   data () {
     return {
-      msg: '这里是院方',
+      searchmsg: '',
       hostipallist:[
+        {
+          name:'',
+          description:'上海医院',
+          abbr:'rjyy',
+          contactName:'联系人',
+          contactAddress:'联系地址',
+          contactMethod1:'联系方式1',
+          contactMethod2:'联系方式2',
+          contactMethod3:'联系方式3',
+          contactMethod4:'联系方式4',
+          hostipalId:"hostipalone",
+          operations:[
+            {
+              type:'编辑',
+              typeclass:'edit',
+              modalId:'#hospitalInfo'
+            },
+            {
+              type:'发票信息',
+              typeclass:'receipts',
+              modalId:'#receipts'
+            },
+            {
+              type:'申请产品',
+              typeclass:'products',
+              modalId:'#hospitalProductsInfo'
+            },
+            {
+              type:'审核产品',
+              typeclass:'auditing',
+              modalId:'#auditingProductsModal'
+            },
+            {
+              type:'审核列表',
+              typeclass:'approveList',
+              modalId:'#formApproveList'
+            }
+          ]         
+        },
         {
           name:'上海医院',
           description:'上海医院',
@@ -545,6 +584,45 @@ export default {
           contactMethod2:'联系方式2',
           contactMethod3:'联系方式3',
           contactMethod4:'联系方式4',
+          hostipalId:"hostipalone",
+          operations:[
+            {
+              type:'编辑',
+              typeclass:'edit',
+              modalId:'#hospitalInfo'
+            },
+            {
+              type:'发票信息',
+              typeclass:'receipts',
+              modalId:'#receipts'
+            },
+            {
+              type:'申请产品',
+              typeclass:'products',
+              modalId:'#hospitalProductsInfo'
+            },
+            {
+              type:'审核产品',
+              typeclass:'auditing',
+              modalId:'#auditingProductsModal'
+            },
+            {
+              type:'审核列表',
+              typeclass:'approveList',
+              modalId:'#formApproveList'
+            }
+          ]         
+        },
+        {
+          name:'苏州医院',
+          description:'苏州的医院',
+          abbr:'szyy',
+          contactName:'联系人',
+          contactAddress:'联系地址',
+          contactMethod1:'联系方式1',
+          contactMethod2:'联系方式2',
+          contactMethod3:'联系方式3',
+          contactMethod4:'联系方式4',
           hostipalId:"hostipaltwo",
           operations:[
             {
@@ -573,7 +651,46 @@ export default {
               modalId:'#formApproveList'
             }
           ]
-        }
+        },
+        {
+          name:'苏州医院',
+          description:'苏州的医院',
+          abbr:'szyy',
+          contactName:'联系人',
+          contactAddress:'联系地址',
+          contactMethod1:'联系方式1',
+          contactMethod2:'联系方式2',
+          contactMethod3:'联系方式3',
+          contactMethod4:'联系方式4',
+          hostipalId:"hostipaltwo",
+          operations:[
+            {
+              type:'编辑',
+              typeclass:'edit',
+              modalId:'#hospitalInfo'
+            },
+            {
+              type:'发票信息',
+              typeclass:'receipts',
+              modalId:'#receipts'
+            },
+            {
+              type:'申请产品',
+              typeclass:'products',
+              modalId:'#hospitalProductsInfo'
+            },
+            {
+              type:'审核产品',
+              typeclass:'auditing',
+              modalId:'#auditingProductsModal'
+            },
+            {
+              type:'审核列表',
+              typeclass:'approveList',
+              modalId:'#formApproveList'
+            }
+          ]
+        },        
       ],     
       hospitalInfos:{
           hospitalName:"",
@@ -672,7 +789,8 @@ export default {
       console.log(id)
     },
     addhospital(){
-      this.hostipallist.push({
+      if(!$(event.currentTarget).hasClass("disabled")){
+        this.hostipallist.push({
           name:this.hospitalInfos.hospitalName,
           description:this.hospitalInfos.hospitalDesc,
           abbr:this.hospitalInfos.hospitalAbbr,
@@ -712,6 +830,20 @@ export default {
           ]    
       });
       $("#hospitalInfo").modal("toggle")
+      };  
+    },
+    serchHospital(){      
+      var searchmsg = this.searchmsg;
+      var hospitallist = this.hostipallist;
+      for (var i = 0; i <= hospitallist.length+1; i++) {
+        hospitallist.forEach(function(item,index,array){        
+        if (searchmsg !== "") {
+          if(!(hospitallist[index].name.indexOf(searchmsg) >= 0)){
+            array.splice(index, 1);
+            }
+          };      
+        })     
+      };      
     }
   },
 }
