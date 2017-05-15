@@ -5,7 +5,7 @@
       <li v-for="item in items">
         <router-link v-bind:to="item.path" v-text="item.item"></router-link>
       </li>
-    </ul>
+    </ul>    
   </div>
 </template>
 

@@ -4,8 +4,9 @@
       <div class="">
         <span v-text='brand' class="footer-brand"></span>
       </div>
-    </div>            
+    </div>                   
   </div>
+
 </template>
 
 <script>
@@ -18,7 +19,7 @@ export default {
   }
 }
 </script>
-<style>
+<style>  
   .system-footer {
     background-color: #fff;
     margin: 0;

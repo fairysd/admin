@@ -870,7 +870,9 @@ export default {
   margin-top: 10px;
  }
  .hostipal .search{
-  margin-top: 20px;
+  margin-top: 35px;
+  text-align: right;
+  padding-right: 0;
  }
  #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList{
   text-align: left;

@@ -426,7 +426,4 @@ export default {
  #systemFunctions .titles span.fun-name{
   width: 31%;
  }
- .partment .pull-right{
-  margin-right: 5%;
- }
 </style>
