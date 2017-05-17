@@ -11,13 +11,13 @@
         </div>
         <div class="form-group">
             <label for="formNo" class="sr-only">单位信息</label>
-            <input type="text" class="form-control" placeholder="单位信息">
+            <input type="text" class="form-control" placeholder="单位信息" v-model="searchmsg">
         </div>
-        <button class="btn btn-primary pull-right" id="btnQuery">查询</button>
+        <button class="btn btn-primary pull-right" id="btnQuery" @click="serchPartment">查询</button>
         <br style="clear:both;">
     </div>
     <div style="margin:1em 0;">
-    <button class="btn btn-primary" id="btnAdd" data-target="#hospitalUnitInfo" data-toggle="modal">新增</button>
+    <button class="btn btn-primary" id="btnAdd" data-target="#hospitalUnitInfo" data-toggle="modal" @click="clearData">新增</button>
     <table id="hospitalUnitList" class="table table-striped">
         <thead>
             <tr>
@@ -44,9 +44,7 @@
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
-                <ul class="dropdown-menu">
-                    <li v-for='operation in item.operations'><a href="#" :class="operation.typeclass" v-text='operation.type' v-bind:data-target="operation.modalId" data-toggle="modal" ></a></li>
-                </ul>
+                <ul class="dropdown-menu"><li><a href="#" data-target="#contactInfo" data-toggle="modal" class="contactInfo">联系信息</a></li><li><a href="#" data-target="#systemFunctionsInfo" data-toggle="modal" class="systemFunctions">关联功能</a></li></ul>
             </div>
         </td>
     </tr></tbody>
@@ -69,7 +67,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-10">
-                            <input type="text" id="name" class="form-control" placeholder="名称">
+                            <input type="text" id="name" class="form-control" placeholder="名称" v-model="partmentModel.name.name" v-bind:class="{haserror:(partmentModel.name.iserror)}">
                         </div>
                     </div>
                     <div class="row">
@@ -77,7 +75,7 @@
                             <label class="control-label" for="formNo">描述</label>
                         </div>
                         <div class="col-sm-10">
-                            <input type="text" id="description" class="form-control" placeholder="描述">
+                            <input type="text" id="description" class="form-control" placeholder="描述" v-model="partmentModel.desc">
                         </div>
                     </div>
                     <div class="row">
@@ -86,7 +84,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <select id="receipt" class="form-control">
+                            <select id="receipt" class="form-control" v-model="partmentModel.tickets.name" v-bind:class="{haserror:(partmentModel.tickets.iserror)}">
                                 <option value="">请选择发票抬头</option>
                             <option value="7d463995-5007-4922-9adc-0dafc9a45ed9">普通发票</option></select>
                         </div>
@@ -94,7 +92,7 @@
                             <label class="control-label" for="formNo">业务类型</label>
                         </div>
                         <div class="col-sm-4">
-                            <select id="businessType" class="form-control">
+                            <select id="businessType" class="form-control" v-model="partmentModel.type">
                                 <option value="1">使用单位</option>
                                 <option value="2">库房</option>
                             </select>
@@ -105,14 +103,14 @@
                             <label class="control-label">缩写代码</label>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="shortCode" class="form-control" placeholder="缩写代码" maxlength="50">
+                            <input type="text" id="shortCode" class="form-control" placeholder="缩写代码" maxlength="50" v-model="partmentModel.abbr">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">联系人</label>
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50">
+                            <input type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-model="partmentModel.contactName.name" v-bind:class="{haserror:(partmentModel.contactName.iserror)}">
                         </div>
                     </div>
                     <div class="row">
@@ -120,7 +118,7 @@
                             <label class="control-label">地址</label>
                         </div>
                         <div class="col-sm-10">
-                            <input type="text" id="address" class="form-control" placeholder="地址" maxlength="50">
+                            <input type="text" id="address" class="form-control" placeholder="地址" maxlength="50" v-model="partmentModel.contactAddress">
                         </div>
                     </div>
                     <div class="row">
@@ -128,13 +126,13 @@
                             <label class="control-label">联系方式1</label>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactWay1" class="form-control" placeholder="联系方式1" maxlength="50">
+                            <input type="text" id="contactWay1" class="form-control" placeholder="联系方式1" maxlength="50" v-model="partmentModel.contactMethod1">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">联系方式2</label>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactWay2" class="form-control" placeholder="联系方式2" maxlength="50">
+                            <input type="text" id="contactWay2" class="form-control" placeholder="联系方式2" maxlength="50" v-model="partmentModel.contactMethod2">
                         </div>
                     </div>
                     <div class="row">
@@ -142,19 +140,19 @@
                             <label class="control-label">联系方式3</label>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactWay3" class="form-control" placeholder="联系方式3" maxlength="50">
+                            <input type="text" id="contactWay3" class="form-control" placeholder="联系方式3" maxlength="50" v-model="partmentModel.contactMethod3">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">联系方式4</label>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactWay4" class="form-control" placeholder="联系方式4" maxlength="50">
+                            <input type="text" id="contactWay4" class="form-control" placeholder="联系方式4" maxlength="50" v-model="partmentModel.contactMethod4">
                         </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btnConfirm">确认</button>
+                <button type="button" class="btn btn-primary" id="btnConfirm" @click="addPartment">确认</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">关闭</button>
             </div>
         </div>
@@ -267,63 +265,32 @@ export default {
   name: 'partment',
   data () {
     return {
-      msg: '这里是院方单位',
-      hospitals:[
-      {
-        value:'c1b445bc-ff83-460e-bf29-22c5c779032f',
-        name:'上海医院'
+      searchmsg: '',
+      //院方单位数据模型
+      partmentModel:{
+        name:{
+            name:"",
+            iserror:false
+          },
+        desc:"",
+        tickets:{
+            name:"",
+            iserror:false
+          },
+        type:"",
+        abbr:"",
+        contactName:{
+            name:"",
+            iserror:false
+          },
+        contactAddress:"",
+        contactMethod1:"",
+        contactMethod2:"",
+        contactMethod3:"",
+        contactMethod4:""
       },
-      {
-        value:'c1b445bc-ff83-460e-bf29-22c5c779032f',
-        name:'苏州医院'
-      },
-      {
-        value:'c1b445bc-ff83-460e-bf29-22c5c779032f',
-        name:'苏州医院1'
-      }
-      ],
-      partmentlist:[
-        {
-          name:'检验科',
-          description:'检验科',
-          abbr:'JYK',
-          contact:'上海交通大学医学院附属瑞金医院',
-          interest:'17',
-          servicetype:'使用单位',
-          operations:[
-            {
-              type:'联系信息',
-              typeclass:'contactInfo',
-              modalId:'#contactInfo'
-            },
-            {
-              type:'关联功能',
-              typeclass:'systemFunctions',
-              modalId:'#systemFunctionsInfo'
-            }            
-          ]
-        },
-        {
-          name:'检验科',
-          description:'检验科',
-          abbr:'JYK',
-          contact:'上海交通大学医学院附属瑞金医院',
-          interest:'17',
-          servicetype:'使用单位',
-          operations:[
-            {
-              type:'联系信息',
-              typeclass:'contactInfo',
-              modalId:'#contactInfo'
-            },
-            {
-              type:'关联功能',
-              typeclass:'systemFunctions',
-              modalId:'#systemFunctionsInfo'
-            }            
-          ]
-        }
-      ],
+      hospitals:[],
+      partmentlist:[],
       systemFunctionsInfos:[
         {
           functionname:'院方',
@@ -369,14 +336,101 @@ export default {
         }
       ],
       contactInfo:{
-        contactName:'联系人',
-        contactAddress:'联系地址',
-        contactMethod1:'联系方式1',
-        contactMethod2:'联系方式2',
-        contactMethod3:'联系方式3',
-        contactMethod4:'联系方式4'
+        
       }
     }
+  },
+   mounted:function(){
+    //获取可选医院列表和默认部门列表
+      this.$http.get('./static/partment.json').then(response => {               
+                // get body data                                  
+                var _this = this;               
+                var data = response.body;
+                var partmentlist = data.partmentlist;
+                var hostipalList = data.hospitals;
+                  _this.hospitals = hostipalList;
+                  _this.partmentlist = partmentlist;               
+              }, response => {
+                // error callback
+              });  
+  },
+  methods:{
+      //添加院方单位之前，清空缓存
+      clearData(){
+        this.partmentModel = {
+        name:{
+            name:"",
+            iserror:false
+          },
+        desc:"",
+        tickets:{
+            name:"",
+            iserror:false
+          },
+        type:"",
+        abbr:"",
+        contactName:{
+            name:"",
+            iserror:false
+          },
+        contactAddress:"",
+        contactMethod1:"",
+        contactMethod2:"",
+        contactMethod3:"",
+        contactMethod4:""
+      }
+      },
+      //添加医院部门
+      addPartment(){
+              //验证必填框是否填写      
+        if (this.partmentModel.name.name =="") {
+                this.partmentModel.name.iserror = true;
+        }else{
+            this.partmentModel.name.iserror = false;
+        };
+        if (this.partmentModel.tickets.name =="") {
+                this.partmentModel.tickets.iserror = true;
+        }else{
+            this.partmentModel.tickets.iserror = false;
+        };
+        if (this.partmentModel.contactName.name =="") {
+                this.partmentModel.contactName.iserror = true;
+        }else{
+            this.partmentModel.contactName.iserror = false;
+        };
+    var isclick = this.partmentModel.name.iserror||this.partmentModel.contactName.iserror||this.partmentModel.tickets.iserror;
+      if(!isclick){
+        this.partmentlist.push({
+          name:this.partmentModel.name.name,
+          description:this.partmentModel.hospitalDesc,
+          abbr:this.partmentModel.hospitalAbbr,
+          tickets:this.partmentModel.tickets.name,
+          type:this.partmentModel.type,
+          contactName:this.partmentModel.contactName.name,
+          contactAddress:this.partmentModel.contactAddress,
+          contactMethod1:this.partmentModel.contactMethod1,
+          contactMethod2:this.partmentModel.contactMethod2,
+          contactMethod3:this.partmentModel.contactMethod3,
+          contactMethod4:this.partmentModel.contactMethod4,
+          hostipalId:this.partmentModel.hostipalId       
+      });
+      $("#hospitalUnitInfo").modal("toggle")
+      }; 
+      },
+       //部门查询
+    serchPartment(){      
+      var searchmsg = this.searchmsg;
+      var partmentlist = this.partmentlist;
+      for (var i = 0; i <= partmentlist.length+1; i++) {
+        partmentlist.forEach(function(item,index,array){        
+        if (searchmsg !== "") {
+          if(!(partmentlist[index].name.indexOf(searchmsg) >= 0)){
+            array.splice(index, 1);
+            }
+          };      
+        })     
+      };      
+    },
   }
 }
 </script>
@@ -389,6 +443,9 @@ export default {
       line-height: 30px;
       padding-left: 15px;
       padding-right: 15px;
+    }
+    .partment .form-control.haserror{
+      border: 1px solid #DC143C;
     }
     .partment .dropdown-menu{
     min-width: 100px;
@@ -426,4 +483,5 @@ export default {
  #systemFunctions .titles span.fun-name{
   width: 31%;
  }
+
 </style>

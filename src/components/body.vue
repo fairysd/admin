@@ -100,7 +100,8 @@ export default {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #fff;    
+    background-color: #fff;   
+    z-index: 1000; 
   }
   #bodyleft{
     position: fixed;

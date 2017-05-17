@@ -3,6 +3,8 @@ import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import hospital from '@/components/hospital'
 import partment from '@/components/partment'
+import VueResource from 'vue-resource';
+Vue.use(VueResource);
 
 Vue.use(Router)
 
