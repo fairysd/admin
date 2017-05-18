@@ -111,4 +111,14 @@ export default {
 #bodycontainer{
   margin-left: 16.6666667%;
 }
+#userInfo {
+    text-align:left;
+}
+ #userInfo .form-control{
+  width: 100%;
+ }
+ #userInfo .form-inline>.row{
+  margin-bottom: 5px;
+  line-height: 30px;
+ }
 </style>

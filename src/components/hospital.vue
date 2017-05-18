@@ -34,7 +34,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="#" data-target="#hospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.hostipalId)">编辑</a>
+                                        <a href="#" data-target="#edithospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.hostipalId)">编辑</a>
                                     </li>
                                     <li>
                                         <a href="#" data-target="#receipts" data-toggle="modal" class="receipts">发票信息</a>
@@ -156,6 +156,88 @@
             </div>
         </div>
         <!-- 增加modal end-->
+         <!-- 编辑modal start-->
+        <div class="modal fade" id="edithospitalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <h4 class="modal-title" id="exampleModalLabel">编辑院方</h4>
+                    </div>
+                    <div class="modal-body forms">
+                        <div class="form-inline">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="control-label" for="formNo">名称</label>
+                                    <span class="require-label">*</span>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input v-model="hospitalInfos.hospitalName.name" type="text" id="name" class="form-control" v-bind:class="{haserror:(hospitalInfos.hospitalName.iserror)}" placeholder="名称" maxlength="50"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="control-label" for="formNo">描述</label>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input v-model="hospitalInfos.hospitalDesc" type="text" id="description" class="form-control" placeholder="描述" maxlength="200"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="control-label">缩写代码</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input v-model="hospitalInfos.hospitalAbbr" type="text" id="shortCode" class="form-control" placeholder="缩写代码" maxlength="50"></div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">联系人</label>
+                                    <span class="require-label">*</span>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input v-model="hospitalInfos.contactName.name" type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-bind:class="{haserror:(hospitalInfos.contactName.iserror)}"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="control-label">地址</label>
+                                </div>
+                                <div class="col-sm-10">
+                                    <input v-model="hospitalInfos.contactAddress" type="text" id="address" class="form-control" placeholder="地址" maxlength="50"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="control-label">联系方式1</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input v-model="hospitalInfos.contactMethod1" type="text" id="contactWay1" class="form-control" placeholder="联系方式1" maxlength="50"></div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">联系方式2</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input v-model="hospitalInfos.contactMethod2" type="text" id="contactWay2" class="form-control" placeholder="联系方式2" maxlength="50"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <label class="control-label">联系方式3</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input v-model="hospitalInfos.contactMethod3" type="text" id="contactWay3" class="form-control" placeholder="联系方式3" maxlength="50"></div>
+                                <div class="col-sm-2">
+                                    <label class="control-label">联系方式4</label>
+                                </div>
+                                <div class="col-sm-4">
+                                    <input v-model="hospitalInfos.contactMethod4" type="text" id="contactWay4" class="form-control" placeholder="联系方式4" maxlength="50"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <label id="error" class="label-danger" v-bind:class="{hidden:!(this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror)}">请输入红框标出的是必填项！</label>
+                        <button @click="applyEdithospital()" type="button" id="btnConfirm" class="btn btn-primary" v-bind:class="{disabled:(this.hospitalInfos.hospitalName.iserror&&this.hospitalInfos.contactName.iserror)}">确认</button>
+                        <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 编辑modal end-->
         <!-- 联系信息modal start-->
         <div class="modal fade in" id="contactInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;">
             <div class="modal-dialog modal-lg" role="document">
@@ -641,6 +723,42 @@ export default {
       $("#hospitalInfo").modal("toggle")
       };        
     },
+    //编辑成功提交请求
+    applyEdithospital(){        
+        //验证必填框是否填写      
+        if (this.hospitalInfos.hospitalName.name =="") {
+                this.hospitalInfos.hospitalName.iserror = true;
+        }else{
+            this.hospitalInfos.hospitalName.iserror = false;
+        };
+        if (this.hospitalInfos.contactName.name =="") {
+                this.hospitalInfos.contactName.iserror = true;
+        }else{
+            this.hospitalInfos.contactName.iserror = false;
+        };
+    var isclick = this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror;
+      if(!isclick){
+        var data = {
+          name:this.hospitalInfos.hospitalName.name,
+          description:this.hospitalInfos.hospitalDesc,
+          abbr:this.hospitalInfos.hospitalAbbr,
+          contactName:this.hospitalInfos.contactName.name,
+          contactAddress:this.hospitalInfos.contactAddress,
+          contactMethod1:this.hospitalInfos.contactMethod1,
+          contactMethod2:this.hospitalInfos.contactMethod2,
+          contactMethod3:this.hospitalInfos.contactMethod3,
+          contactMethod4:this.hospitalInfos.contactMethod4,
+          hostipalId:this.hospitalInfos.hostipalId       
+      };
+        this.$http.post("url",data).then(response => {
+            alert("修改成功")
+        },response => {
+                // error callback
+                console.log("请求已经发送")
+              });
+      $("#edithospitalInfo").modal("toggle")
+      };        
+    },
     //医院查询
     serchHospital(){      
       var searchmsg = this.searchmsg;
@@ -761,17 +879,17 @@ export default {
   text-align: right;
   padding-right: 0;
  }
- #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList{
+ #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo{
   text-align: left;
  }
- #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row{
+ #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row{
   margin-bottom: 5px;
   line-height: 30px;
  }
  .require-label{
   color: red;
  }
- #hospitalInfo .form-control,#hospitalProductsInfo .form-control, #formApproveList .form-control{
+ #hospitalInfo .form-control,#hospitalProductsInfo .form-control, #formApproveList .form-control, #edithospitalInfo .form-control{
   width: 100%;
  }
  #contactInfo .form-control-static{

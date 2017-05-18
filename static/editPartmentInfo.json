@@ -11,7 +11,11 @@
           "contactMethod2":"编辑联系方式2",
           "contactMethod3":"编辑联系方式3",
           "contactMethod4":"编辑联系方式4",
-          "hostipalId":"hostipalone" 
-    }     
+          "tickets":"获取到的开票信息",
+          "type":"获取到的部门信息",
+          "partmentId":"partmentId" 
+    }
+     
+
 }
 
