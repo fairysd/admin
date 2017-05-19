@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import hospital from '@/components/hospital'
 import partment from '@/components/partment'
+import products from '@/components/products'
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
@@ -24,6 +25,11 @@ export default new Router({
       path: '/partment',
       name: 'partment',
       component: partment
+    },
+    {
+      path: '/products',
+      name: 'products',
+      component: products
     }
   ]
 })

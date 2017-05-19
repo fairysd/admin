@@ -322,7 +322,15 @@
                                     <th style="width:50px;">操作</th>
                                 </tr>
                             </thead>
-                            <tbody></tbody>
+                            <tbody><tr class="receipt-item">
+        <td><span>大学大学</span></td>
+        <td><span>3</span></td>
+        <td></td>
+    </tr><tr class="receipt-item">
+        <td><span>上海交通大学医学院附属瑞金医院</span></td>
+        <td><span>17</span></td>
+        <td></td>
+    </tr></tbody>
                             <tfoot>
                                 <tr>
                                     <td>
@@ -879,7 +887,7 @@ export default {
   text-align: right;
   padding-right: 0;
  }
- #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo{
+ #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo, #receipts{
   text-align: left;
  }
  #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row{

@@ -68,7 +68,7 @@
                 </div>
                 <div class="modal-footer">
                     <label id="error" class="label-danger hidden">请输入红框标出的是必填项！</label>
-                    <button type="button" id="btnConfirm" class="btn btn-primary">确认</button>
+                    <button type="button" id="btnConfirm" class="btn btn-primary" @click="editUser">确认</button>
                     <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
         </div>
@@ -86,6 +86,11 @@ export default {
   data () {
     return {
      
+    }
+  },
+  methods:{
+    editUser(){
+        $("#userInfo").modal("toggle")
     }
   }
 }

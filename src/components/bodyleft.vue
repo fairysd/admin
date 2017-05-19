@@ -22,7 +22,11 @@ export default {
        {  
           item:'院方单位',
           path:'/partment'
-        },       
+        },   
+        {  
+          item:'产品',
+          path:'/products'
+        }
       ]       
       
     }

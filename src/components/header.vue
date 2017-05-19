@@ -45,4 +45,7 @@ export default {
   .system-header .logstatus{
     text-align: right;
   }
+  .current-user-edit{
+    cursor: pointer;
+  }
 </style>
