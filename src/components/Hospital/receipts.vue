@@ -18,9 +18,9 @@
                                 </tr>
                             </thead>
                             <tbody><tr class="receipt-item edit" v-for="item in this.$parent.$data.receiptModel">
-        <td><span style="display: none;" v-text="item.title"></span><input type="text" class="form-control" v-model="item.title"></td>
-        <td><span style="display: none;" v-text="item.interest"></span><input type="text" class="form-control" v-model="item.interest"></td>
-        <td><a href="#" id="btnUpdate" class="btn btn-primary save">保存</a></td> 
+        <td><span v-text="item.title" @click="editInfo" v-show="display"></span><input type="text" class="form-control" v-model="item.title" v-show="edit"></td>
+        <td><span v-text="item.interest" @click="editInfo" v-show="display"></span><input type="text" class="form-control" v-model="item.interest" v-show="edit"></td>
+        <td><button href="#" id="btnUpdate" class="btn btn-primary save" v-show="save" @click="saveInfo">保存</button></td> 
     </tr></tbody>
                             <tfoot>
                                 <tr>
@@ -48,11 +48,23 @@ export default {
   name: 'receipts',
   data () {
     return {     
-        
+        edit:false,
+        display:true,
+        save:false
     }
   },
   methods:{
-
+    editInfo(){
+        this.edit=true;
+        this.display=false;
+        this.save=true;
+    },
+    saveInfo(){
+        this.edit=false;
+        this.display=true;
+        this.save=false;
+        return false;
+    }
   }
 }
 </script>

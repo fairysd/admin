@@ -15,7 +15,7 @@
                                     <label class="control-label">联系人</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactName"></p>
+                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactName.name"></p>
                                 </div>
                             </div>
                             <div class="row">

@@ -49,7 +49,15 @@
         </td>
     </tr></tbody>
     </table>
-    <div id="pageList" class="text-right"><nav><ul class="pagination"><li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">«</span></a></li><li class="active"><a href="#" page="1">1</a></li><li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li></ul></nav></div>
+    <!-- 分页 -->
+        <div id="pageList" class="text-right"><nav><ul class="pagination" >
+            <li v-show="current != 1" @click="current-- && goto(current)" ><a href="#">上一页</a></li>
+            <li v-for="index in pages" @click="goto(index)" :class="{'active':current == index}" :key="index">
+              <a href="#" >{{index}}</a>
+            </li>
+            <li v-show="allpage != current && allpage != 0 " @click="current++ && goto(current++)"><a href="#" >下一页</a></li>
+        </ul></nav>
+        </div>
 </div>
 <!-- 新增modal start -->
 <addPartment></addPartment>
@@ -76,6 +84,9 @@ export default {
   components: {addPartment,editPartment,contactInfo,relativePartment},
   data () {
     return {
+      current:1,
+    showItem:5,
+    allpage:1,
       searchmsg: '',
       //院方单位数据模型
       partmentModel:{
@@ -108,6 +119,28 @@ export default {
       }
     }
   },
+   computed:{
+          pages:function(){
+                var pag = [];
+                  if( this.current < this.showItem ){ //如果当前的激活的项 小于要显示的条数
+                       //总页数和要显示的条数那个大就显示多少条
+                       var i = Math.min(this.showItem,this.allpage);
+                       while(i){
+                           pag.unshift(i--);
+                       }
+                   }else{ //当前页数大于显示页数了
+                       var middle = this.current - Math.floor(this.showItem / 2 ),//从哪里开始
+                           i = this.showItem;
+                       if( middle >  (this.allpage - this.showItem)  ){
+                           middle = (this.allpage - this.showItem) + 1
+                       }
+                       while(i--){
+                           pag.push( middle++ );
+                       }
+                   }
+                 return pag
+               }
+      },
    mounted:function(){
     //获取可选医院列表和默认部门列表
       this.$http.get('./static/partment.json').then(response => {               
@@ -192,16 +225,13 @@ export default {
      displayContactInfo(id){
         var _this = this;         
               this.$http.get('./static/contactInfo.json',{params:{id:id}}).then(response => {               
-                // get body data
-                console.log(response)      
+                // get body data    
                 var data = response.body;
                 if (data.infostatus) {
                     console.log(id)
                    var  infobody = data.infobody;
                     _this.contactInfo = infobody;
                 };
-                
-
               }, response => {
                 // error callback
               });
@@ -211,16 +241,18 @@ export default {
     relFunction(id){
         var _this = this;         
               this.$http.get('./static/partmentFunctionInfo.json',{params:{id:id}}).then(response => {               
-                // get body data
-                console.log(response)      
+                // get body data   
                 var data = response.body;
-                _this.systemFunctionsInfos = data;
-                
-
+                _this.systemFunctionsInfos = data;    
               }, response => {
                 // error callback
               });
-    }
+    },
+     goto:function(index){
+          if(index == this.current) return;
+            this.current = index;
+           // 发送页面请求
+        }
   }
 }
 </script>
@@ -273,5 +305,4 @@ export default {
  #systemFunctions .titles span.fun-name{
   width: 31%;
  }
-
 </style>

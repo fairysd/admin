@@ -31,7 +31,7 @@
                                 <tr v-for="item in this.$parent.$data.auditingProducts.auditingProducts">
                                     <td v-text="item.productName"></td>
                                     <td>
-                                        <input type="checkbox"></td>
+                                        <input type="checkbox" @click="clickSubmit(item.productValue)"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -65,6 +65,9 @@ export default {
                 // error callback
                 console.log("error")
               });
+    },
+    clickSubmit(val){
+        // 发送http请求，发送产品的value值确认
     }
   }
 }

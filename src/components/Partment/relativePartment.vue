@@ -19,7 +19,7 @@
                   <span class="name" v-bind:id="operation.operationId" v-text="operation.operationname">库房盘查</span>
                   <div class="operation">
                     <input type="checkbox" class="query" value="query" style="display:none">            
-                    <input type="checkbox" value="operate"></div>
+                    <input type="checkbox" value="operate" @click="clickSubmit(operation.operationId)"></div>
                 </div>                
               </div>              
             </div>
@@ -42,7 +42,9 @@ export default {
          }
   },
   methods:{  
-    
+    clickSubmit(id){
+      // 发送http请求
+    }
   }
 }
 </script>

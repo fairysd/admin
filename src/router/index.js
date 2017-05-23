@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import hospital from '@/components/Hospital/hospital'
 import partment from '@/components/Partment/partment'
-import products from '@/components/products'
+import products from '@/components/Products/products'
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 

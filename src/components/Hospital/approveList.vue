@@ -51,7 +51,7 @@
                                             <input id="selectManager" class="form-control hidden" autocomplete="off"></div>
                                     </td>
                                     <td>
-                                        <a href="#" id="selectSave" class="btn btn-primary">保存</a>
+                                        <button href="#" id="selectSave" class="btn btn-primary" @click="sava">保存</button>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -70,7 +70,10 @@ export default {
   name: 'approveList',
   data () {
     return {     
-        
+        sava(){
+            //发送http请求保存数据
+            alert("保存成功")
+        }
     }
   },
   methods:{
