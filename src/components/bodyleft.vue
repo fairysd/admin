@@ -14,23 +14,21 @@ export default {
   name: 'bodyleft',
   data () {
     return {
-      items:[
-       {  
-          item:'院方',
-          path:'/hospital'
-        },
-       {  
-          item:'院方单位',
-          path:'/partment'
-        },   
-        {  
-          item:'产品',
-          path:'/products'
-        }
-      ]       
+      items:[]
       
     }
-  }
+  },
+   mounted:function(){
+    //根据登陆角色，获取该角色操作权限
+      this.$http.get('./static/roleAuthority.json').then(response => {               
+                // get body data                                  
+                var _this = this;
+                var data = response.body;   
+                _this.items = data;
+              }, response => {
+                // error callback
+              });
+  },
 }
 </script>
 <style>

@@ -27,6 +27,9 @@ export default {
       username:'admin',
       loginstatus:'注销'
     }
+  },       
+  methods:{
+    
   }
 }
 </script>

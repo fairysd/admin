@@ -85,9 +85,16 @@ export default {
   components:{bodyleft},
   data () {
     return {
-     
+     username:""
     }
   },
+  //  mounted:function(){
+  //     var self=this;
+  //     this.$on('username-msg',(username)=>{
+  //         self.username=username;
+  //     })
+  //    console.log(username)
+  // },
   methods:{
     editUser(){
         $("#userInfo").modal("toggle")
