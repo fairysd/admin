@@ -32,5 +32,10 @@
           "servicetype":"使用单位",
           "partmentId":"partmentId"        
         }
-      ]
+      ],
+      "infopage":{
+      "current":1,
+      "showItem":5,
+      "allpage":1
+    }
     }

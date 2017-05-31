@@ -142,15 +142,19 @@ export default {
                }
       },
    mounted:function(){
-    //获取可选医院列表和默认部门列表
+    //获取可选医院列表和默认部门列表以及分页信息
       this.$http.get('./static/partment.json').then(response => {               
                 // get body data                                  
                 var _this = this;               
                 var data = response.body;
                 var partmentlist = data.partmentlist;
                 var hostipalList = data.hospitals;
-                  _this.hospitals = hostipalList;
-                  _this.partmentlist = partmentlist;               
+                var page = data.infopage;        
+                _this.allpage = page.allpage;
+                _this.current = page.current;
+                _this.showItem = page.showItem;
+                _this.hospitals = hostipalList;
+                _this.partmentlist = partmentlist;               
               }, response => {
                 // error callback
               });  
@@ -184,18 +188,29 @@ export default {
       
     
        //部门查询
+       //发送查询关键字，返回查询结果
     serchPartment(){      
-      var searchmsg = this.searchmsg;
-      var partmentlist = this.partmentlist;
-      for (var i = 0; i <= partmentlist.length+1; i++) {
-        partmentlist.forEach(function(item,index,array){        
-        if (searchmsg !== "") {
-          if(!(partmentlist[index].name.indexOf(searchmsg) >= 0)){
-            array.splice(index, 1);
-            }
-          };      
-        })     
-      };      
+       var searchmsg = this.searchmsg;
+      if (searchmsg === "") {
+        alert("请输入查询关键词")
+      }else{
+        this.$http.get('./static/partment.json',{params:{keywords:searchmsg}}).then(response => {
+        var data = response.body;
+        this.partmentlist = data.partmentlist;
+
+      });
+      }
+      // var searchmsg = this.searchmsg;
+      // var partmentlist = this.partmentlist;
+      // for (var i = 0; i <= partmentlist.length+1; i++) {
+      //   partmentlist.forEach(function(item,index,array){        
+      //   if (searchmsg !== "") {
+      //     if(!(partmentlist[index].name.indexOf(searchmsg) >= 0)){
+      //       array.splice(index, 1);
+      //       }
+      //     };      
+      //   })     
+      // };      
     },
     //获取部门息进行编辑
     editPartment(id){

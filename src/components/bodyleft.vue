@@ -10,21 +10,25 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'bodyleft',
   data () {
     return {
-      items:[]
-      
+      items:[],
     }
   },
    mounted:function(){
     //根据登陆角色，获取该角色操作权限
-      this.$http.get('./static/roleAuthority.json').then(response => {               
+
+    //获取session中的用户信息
+    var id = "userid";
+      this.$http.get('./static/roleAuthority.json',{params:{id:id}}).then(response => {               
                 // get body data                                  
                 var _this = this;
                 var data = response.body;   
                 _this.items = data;
+                
               }, response => {
                 // error callback
               });

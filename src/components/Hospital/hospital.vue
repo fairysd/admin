@@ -95,16 +95,17 @@
  import receipts from './receipts'
  import applyProduct from './applyProduct'
  import auditingProduct from './auditingProduct'
-  import approveList from './approveList'
+ import approveList from './approveList'
 
 export default {   
   name: 'hostipal',
   components: {addHospital,editHospital,contactInfo,receipts,applyProduct,auditingProduct,approveList},
   data () {
     return {
-      current:1,
-      showItem:5,
-      allpage:1,
+
+      current:"",
+      showItem:"",
+      allpage:"",
       searchmsg: '',
       hostipallist:[],     
       hospitalInfos:{
@@ -173,12 +174,15 @@ export default {
     //获取医院数据
       this.$http.get('./static/hospitalInfo.json').then(response => {               
                 // get body data                                  
-                var _this = this;               
+                var _this = this;           
                 var data = response.body;
                 var hospital = data.infobody;
-                for (var i = 0; i < hospital.length; i++) {
-                    _this.hostipallist.push(hospital[i])
-                };
+                var page = data.infopage;               
+                _this.hostipallist = hospital;
+                _this.allpage = page.allpage;
+                _this.current = page.current;
+                _this.showItem = page.showItem;
+                
               }, response => {
                 // error callback
               });      
@@ -230,18 +234,29 @@ export default {
             
     },   
     //医院查询
+    //发送关键词  返回结果
     serchHospital(){      
       var searchmsg = this.searchmsg;
-      var hospitallist = this.hostipallist;
-      for (var i = 0; i <= hospitallist.length+1; i++) {
-        hospitallist.forEach(function(item,index,array){        
-        if (searchmsg !== "") {
-          if(!(hospitallist[index].name.indexOf(searchmsg) >= 0)){
-            array.splice(index, 1);
-            }
-          };      
-        })     
-      };      
+      // var hospitallist = this.hostipallist;
+      if (searchmsg === "") {
+        alert("请输入查询关键词")
+      }else{
+        this.$http.get('./static/hospitalInfo.json',{params:{keywords:searchmsg}}).then(response => {
+        var data = response.body;
+        this.hospitalList = data.infobody;
+
+      });
+      }
+      
+      // for (var i = 0; i <= hospitallist.length+1; i++) {
+      //   hospitallist.forEach(function(item,index,array){        
+      //   if (searchmsg !== "") {
+      //     if(!(hospitallist[index].name.indexOf(searchmsg) >= 0)){
+      //       array.splice(index, 1);
+      //       }
+      //     };      
+      //   })     
+      // };      
     },
     //获取医院信息进行编辑
     editHospital(id){

@@ -123,7 +123,7 @@ export default {
         };
     var isclick = this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror;
       if(!isclick){
-        this.$parent.$data.hostipallist.push({
+        var addHospitalInfo = {
           name:this.hospitalInfos.hospitalName.name,
           description:this.hospitalInfos.hospitalDesc,
           abbr:this.hospitalInfos.hospitalAbbr,
@@ -132,9 +132,15 @@ export default {
           contactMethod1:this.hospitalInfos.contactMethod1,
           contactMethod2:this.hospitalInfos.contactMethod2,
           contactMethod3:this.hospitalInfos.contactMethod3,
-          contactMethod4:this.hospitalInfos.contactMethod4,
-          hostipalId:this.hospitalInfos.hostipalId       
-      });
+          contactMethod4:this.hospitalInfos.contactMethod4
+      };
+       this.$http.post('./static/addHospital.json',addHospitalInfo).then(response => {               
+                // get body data                    
+              console.log("添加成功")
+                              
+              }, response => {
+                // error callback
+              });
       $("#hospitalInfo").modal("toggle")
       };        
     },

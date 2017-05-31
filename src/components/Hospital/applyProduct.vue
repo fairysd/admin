@@ -210,6 +210,11 @@ export default {
          //
          var data = this.applyModel;
          // 发送http请求
+         this.$http.post('./static/applyProductInfo.json',data).then(response => {
+            
+              }, response => {
+                // error callback
+              });
       $("#hospitalProductsInfo").modal("toggle")
       }; 
     },

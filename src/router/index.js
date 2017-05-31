@@ -5,9 +5,12 @@ import hospital from '@/components/Hospital/hospital'
 import partment from '@/components/Partment/partment'
 import products from '@/components/Products/products'
 import VueResource from 'vue-resource';
+import Vuex from 'vuex';
+Vue.use(Vuex);
 Vue.use(VueResource);
+Vue.use(Router);
 
-Vue.use(Router)
+
 
 export default new Router({
   routes: [

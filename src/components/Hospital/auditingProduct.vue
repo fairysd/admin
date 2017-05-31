@@ -68,6 +68,12 @@ export default {
     },
     clickSubmit(val){
         // 发送http请求，发送产品的value值确认
+          this.$http.get('./static/asd.json',{params:{val:val}}).then(response => {            
+              
+              }, response => {
+                // error callback
+                console.log("error")
+              });
     }
   }
 }

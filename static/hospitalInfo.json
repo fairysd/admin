@@ -44,8 +44,12 @@
           "contactMethod3":"联系方式3",
           "contactMethod4":"联系方式4",
           "hostipalId":"hostipalone" 
+    }     
+],
+    "infopage":{
+      "current":1,
+      "showItem":5,
+      "allpage":1
     }
-     
-] 
 }
 

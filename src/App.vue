@@ -17,9 +17,11 @@ import adheader from './components/header'
 import adfooter from './components/footer'
 import adbody from './components/body'
 
+
+
 export default {
   name: 'app',
-  components:{adheader,adfooter,adbody}
+  components:{adheader,adfooter,adbody},  
 }
 </script>
 
