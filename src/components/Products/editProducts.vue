@@ -120,13 +120,25 @@ export default {
         };
     var isclick = this.$parent.$data.productModel.name.iserror||this.$parent.$data.productModel.miniPackageUnit.iserror||this.$parent.$data.productModel.miniPackageCount.iserror;
       if(!isclick){
-        this.$http.get('url').then(response => {
-            console.log("请求发送");
-                        
+       var data = {
+        name:$parent.$data.productModel.name.value,
+        wholeName:$parent.$data.productModel.wholeName,
+        abbr:$parent.$data.productModel.abbr,
+        brand:$parent.$data.productModel.brand,
+        miniPackageSpec:$parent.$data.productModel.miniPackageSpec,
+        miniPackageUnit:$parent.$data.productModel.miniPackageUnit.value,
+        miniPackageCount:$parent.$data.productModel.miniPackageCount.value,
+        standardUnit:$parent.$data.productModel.standardUnit,
+        class:$parent.$data.productModel.class,
+        domestic:$parent.$data.productModel.domestic
+      };
+       this.$http.post('./static/editProducts.json',data).then(response => {               
+                // get body data                    
+              console.log("请求已经发送")
+                              
               }, response => {
                 // error callback
               });
-      
       $("#editProductInfo").modal("toggle")
       }; 
     },

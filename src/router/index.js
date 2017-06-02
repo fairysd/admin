@@ -4,6 +4,7 @@ import Hello from '@/components/Hello'
 import hospital from '@/components/Hospital/hospital'
 import partment from '@/components/Partment/partment'
 import products from '@/components/Products/products'
+import user from '@/components/User/user'
 import VueResource from 'vue-resource';
 import Vuex from 'vuex';
 Vue.use(Vuex);
@@ -33,6 +34,11 @@ export default new Router({
       path: '/products',
       name: 'products',
       component: products
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: user
     }
   ]
 })

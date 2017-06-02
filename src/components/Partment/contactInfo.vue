@@ -1,4 +1,4 @@
-<template>
+    <template>
     <div class="modal fade in" id="contactInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">

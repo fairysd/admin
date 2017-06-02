@@ -120,7 +120,7 @@ export default {
         };
     var isclick = this.$parent.$data.productModel.name.iserror||this.$parent.$data.productModel.miniPackageUnit.iserror||this.$parent.$data.productModel.miniPackageCount.iserror;
       if(!isclick){
-        this.$parent.$data.productList.push({
+         var data = {
         name:this.$parent.$data.productModel.name.value,
         wholeName:this.$parent.$data.productModel.wholeName,
         abbr:this.$parent.$data.productModel.abbr,
@@ -131,7 +131,14 @@ export default {
         standardUnit:this.$parent.$data.productModel.standardUnit,
         class:this.$parent.$data.productModel.class,
         domestic:this.$parent.$data.productModel.domestic
-      });
+      };
+       this.$http.post('./static/addProducts.json',data).then(response => {               
+                // get body data                    
+              console.log("添加成功")
+                              
+              }, response => {
+                // error callback
+              });
       $("#productInfo").modal("toggle")
       }; 
     },

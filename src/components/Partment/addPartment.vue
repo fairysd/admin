@@ -158,7 +158,7 @@ export default {
         };
     var isclick = this.partmentModel.name.iserror||this.partmentModel.contactName.iserror||this.partmentModel.tickets.iserror;
       if(!isclick){
-        _this.partmentlist.push({
+        var  data = {
           name:this.partmentModel.name.name,
           description:this.partmentModel.hospitalDesc,
           abbr:this.partmentModel.hospitalAbbr,
@@ -171,7 +171,14 @@ export default {
           contactMethod3:this.partmentModel.contactMethod3,
           contactMethod4:this.partmentModel.contactMethod4,
           hostipalId:this.partmentModel.hostipalId       
-      });
+      };
+       this.$http.post('./static/addPartment.json',data).then(response => {               
+                // get body data                    
+              console.log("添加成功")
+                              
+              }, response => {
+                // error callback
+              });
       $("#hospitalUnitInfo").modal("toggle")
       }; 
       },

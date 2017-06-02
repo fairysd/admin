@@ -6,9 +6,9 @@
     <div class="form-inline searchbox">
         <div class="form-group">
             <label for="formNo" class="sr-only">产品</label>
-            <input type="text" id="condition" class="form-control" placeholder="产品">
+            <input type="text" id="condition" class="form-control" placeholder="产品" v-model="this.searchmsg">
         </div>
-        <button class="btn btn-primary pull-right" id="btnQuery">查询</button>
+        <button class="btn btn-primary pull-right" id="btnQuery" @click="serchProduct">查询</button>
         <br style="clear:both;">
     </div>
     <div class="vertical-margin-1em">
@@ -75,7 +75,7 @@ export default {
     return {
     current:1,
     showItem:5,
-    allpage:13,
+    allpage:1,
     searchmsg:"",
       productList:[],
       productModel:{
@@ -133,8 +133,7 @@ export default {
                 
               }, response => {
                 // error callback
-              });      
-
+              });  
   },
   methods:{
     //添加产品
@@ -188,18 +187,14 @@ export default {
                 // error callback
               });
     },
-       serchPartment(){      
+       serchProduct(){      
       var searchmsg = this.searchmsg;
-      var productList = this.productList;
-      for (var i = 0; i <= productList.length+1; i++) {
-        productList.forEach(function(item,index,array){        
-        if (searchmsg !== "") {
-          if(!(productList[index].name.indexOf(searchmsg) >= 0)){
-            array.splice(index, 1);
-            }
-          };      
-        })     
-      };      
+      if (searchmsg === "") {
+        alert("请输入查询关键词")
+      }else{
+        this.$http.get('./static/prdut.json',{params:{keywords:searchmsg}}).then(response => {        
+      });      
+      }
     },
     goto:function(index){
           if(index == this.current) return;

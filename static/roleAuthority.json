@@ -10,5 +10,9 @@
         {  
           "item":"产品",
           "path":"/products"
+        },
+        {  
+          "item":"用户",
+          "path":"/user"
         }
       ]    
