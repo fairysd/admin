@@ -6,22 +6,22 @@
 <div class="form-inline">
     <div class="form-group">
         <label for="formNo">院方/供应商</label>
-        <select id="roots" class="form-control">
+        <select id="roots" class="form-control" v-on:change="applyunit">
         <optgroup label="院方"><option v-for="item in hospital" v-text="item.name" v-bind:value="item.id"></option></optgroup><optgroup label="供应商"><option v-for="item in vendor" v-text="item.name" v-bind:value="item.id">1111</option></optgroup></select>
     </div>
     <div class="form-group">
         <label for="formNo">单位</label>
-        <select id="units" class="form-control"><option value="">请选择...</option><option value="c1b445bc-ff83-460e-bf29-22c5c779032f">上海医院</option><option value="db5d1092-34fc-4dae-a16f-8ab4fa90e191">检验科</option><option value="02c0f598-2009-49ce-b09e-9ab5f60051f5">库房A</option></select>
+        <select id="units" class="form-control"><option value="">请选择...</option><option v-for="item in units" v-bind:value="item.value" v-text="item.name"></option></select>
     </div>
     <div class="form-group style_user">
         <label for="formNo" class="sr-only">用户</label>
         <input type="text" id="condition" class="form-control" placeholder="用户">
     </div>
-    <button class="btn btn-primary pull-right" id="btnQuery">查询</button>
+    <button class="btn btn-primary pull-right" id="btnQuery" @click="serachUser">查询</button>
     <br style="clear:both;">
 </div>
 <div class="vertical-margin-1em">
-    <button class="btn btn-primary" id="btnAdd">新增</button>
+    <button class="btn btn-primary" id="btnAdd" @click="addUser()" data-target="#userInfo" data-toggle="modal">新增</button>
     <table id="userList" class="table table-striped">
         <thead>
             <tr>
@@ -33,21 +33,21 @@
                 <th style="width:120px">操作</th>
             </tr>
         </thead>
-        <tbody><tr>
-        <td>瑞金</td>
-        <td>htest_rj</td>
-        <td>上海医院</td>
-        <td>检验科</td>
-        <td>员工</td>
+        <tbody><tr v-for="item in userInfo">
+        <td v-text="item.name"></td>
+        <td  v-text="item.account"></td>
+        <td  v-text="item.hospital"></td>
+        <td  v-text="item.partment"></td>
+        <td  v-text="item.space"></td>
         <td>
             <div class="btn-group">
-                <a href="#" class="btn btn-primary edit">编辑</a>
+                <a href="#" class="btn btn-primary edit" @click="editUser(item.id)" data-target="#editUserInfo" data-toggle="modal">编辑</a>
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="#" class="userPrivilege">关联单位</a></li>
+                    <li><a href="#" class="userPrivilege" @click="relativePartment(item.id)">关联单位</a></li>
                 </ul>
             </div>
         </td>
@@ -63,43 +63,53 @@
             <li v-show="allpage != current && allpage != 0 " @click="current++ && goto(current++)"><a href="#" >下一页</a></li>
         </ul></nav>
         </div>
-    </div>
-<!--     //新增modal -->
 
+    <!-- 添加用户 --> 
+    <addUser></addUser>
+    <!-- 添加用户 -->
+    <editUser></editUser>
     </div>
 
 </template>
 
 <script>
+ import addUser from './addUser'
+ import editUser from './editUser'
 export default {
     name: 'user',
-    components: {},
+    components: {addUser,editUser},
   data () {
     return {
-    current:1,
-    showItem:5,
-    allpage:1,
+    current:"",
+    showItem:"",
+    allpage:"",
     searchmsg:"",
-     hospital:[
-     {
-        name:"阿斯顿",
-        id:"123"
-     },
-     {
-        name:"电风扇广泛",
-        id:"234"
-     }
-     ],
-     vendor:[
-     {
-        name:"下次v",
-        id:"345"
-     },
-     {
-        name:"下次v",
-        id:"987"
-     }
-     ]          
+
+    userInfo:[],
+    hospital:[],
+    vendor:[],
+    units:[],
+    userModel:{
+      root:"",
+      unit:"",
+      name:"",
+      account:"",
+      password:"",
+      repeatPassword:"",
+      place:""
+    },
+    editUserModel:{
+        unit:"",
+        name:"",
+        account:"",
+        password:"",
+        repeatPassword:"",
+        place:""
+    },    
+    addUserHospital:[],
+    addUserVender:[],
+    addUserUnit:[],
+    editUserUnit:[]
     }
   },
   computed:{
@@ -130,33 +140,89 @@ export default {
                 // get body data                                  
                 var _this = this;               
                 var data = response.body;
-                _this.userList = data;
-                
+                _this.hospital = data.hospital;
+                _this.vendor = data.vendor;   
               }, response => {
                 // error callback
-              });      
-
+              });     
+       this.$http.get('./static/userInfo.json').then(response => {               
+                // get body data                                  
+                var _this = this;               
+                var data = response.body;
+                var page = data.infopage;     
+                this.userInfo = data.userInfo;
+                this.allpage = page.allpage;
+                this.current = page.current;
+                this.showItem = page.showItem;
+              }, response => {
+                // error callback
+              });  
   },
   methods:{      
-       serchPartment(){      
+    serachUser(){      
+      console.log(this.GLOBAL.hostIp)
       var searchmsg = this.searchmsg;
-      var productList = this.productList;
-      for (var i = 0; i <= productList.length+1; i++) {
-        productList.forEach(function(item,index,array){        
-        if (searchmsg !== "") {
-          if(!(productList[index].name.indexOf(searchmsg) >= 0)){
-            array.splice(index, 1);
-            }
-          };      
-        })     
-      };      
+      if (searchmsg === "") {
+        alert("请输入查询关键词")
+      }else{
+        this.$http.get('./static/user.json',{params:{keywords:searchmsg}}).then(response => {
+        var data = response.body;
+        this.hospitalList = data.infobody;
+
+      });
+      }    
     },
     goto:function(index){
           if(index == this.current) return;
             this.current = index;
            // 发送页面请求
-        }
-  }
+        },
+    addUser(){
+    // clear cache
+      this.userModel = {
+        root:"",
+        unit:"",
+        name:"",
+        account:"",
+        password:"",
+        repeatPassword:"",
+        place:""
+       };    
+      //获取供应商和院方列表
+      this.$http.get('./static/addUser.json').then(response => {               
+                  // get body data                                
+                  var _this = this;               
+                  var data = response.body;
+                  this.addUserHospital = data.hospital;
+                  this.addUserVender = data.vender;
+                  this.addUserUnit = data.unit;
+                  
+                }, response => {
+                  // error callback
+                });      
+    },
+    applyunit(){
+    var val = $(event.currentTarget).val();
+    this.$http.get('./static/addUser.json',{params:{val:val}}).then(response => {
+            var data = response.body;
+            this.units = data.unit;              
+              }, response => {
+                // error callback
+              });
+    },
+  //编辑
+    editUser(id){
+        //发送用户id获取数据
+         this.$http.get('./static/editUser.json',{params:{id:id}}).then(response => {
+            var data = response.body;
+            this.editUserModel = data.editUserInfo;       
+            this.editUserUnit = data.unit;
+              }, response => {
+                // error callback
+              });
+    }
+  },
+ 
 }
 </script>
 <style>
@@ -183,5 +249,8 @@ export default {
  }
  #userMain .style_user{
   margin-top: 35px;
+ }
+ #userMain .vertical-margin-1em{
+  margin-top: 15px;
  }
 </style>

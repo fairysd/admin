@@ -8,18 +8,9 @@ import $ from 'jquery'
 import './assets/css/bootstrap.min.css'
 import './assets/js/bootstrap.min'
 import Vuex from 'vuex';
+import global_ from './components/Global'
+Vue.prototype.GLOBAL = global_
 Vue.use(Vuex);
-
-const store = new Vuex.Store({
-  state: {
-    count: 0
-  },
-  mutations: {
-    increment (state) {
-      state.count++
-    }
-  }
-})
 
 Vue.config.productionTip = false
 
@@ -27,7 +18,6 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
-  store,
   template: '<App/>',
   components: { App }
 })

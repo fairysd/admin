@@ -18,7 +18,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control" required="" id="units" v-model="applyModel.partment.value" v-bind:class="{haserror:(applyModel.partment.iserror)}">
                                         <option value="">请选择申请单位</option>
-                                        <option v-for="item in this.$parent.$data.applyProduct.applyHospitals" v-bind:value="item.hostipalValue" v-text="item.hostipalName"></option>
+                                        <option v-for="item in $parent.$data.applyProduct.applyHospitals" v-bind:value="item.hostipalValue" v-text="item.hostipalName"></option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
@@ -28,7 +28,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control" required="" id="products" v-on:change="applyProductBind" v-model="applyModel.product.value" v-bind:class="{haserror:(applyModel.product.iserror)}">
                                         <option value="">请选择产品</option>
-                                        <option v-for="product in this.$parent.$data.applyProduct.applyProducts" v-bind:value="product.productValue" v-text="product.productName"></option>
+                                        <option v-for="product in $parent.$data.applyProduct.applyProducts" v-bind:value="product.productValue" v-text="product.productName"></option>
                                     </select>
                                 </div>
                             </div>

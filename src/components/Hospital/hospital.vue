@@ -24,26 +24,26 @@
                     <tr v-for="item in hostipallist">
                         <td v-text="item.name"></td>
                         <td v-text="item.description"></td>
-                        <td v-text="item.abbr"></td>
+                        <td v-text="item.shortCode"></td>
                         <td>
                             <div class="btn-group">
-                                <a href="#" class="btn btn-primary contactInfo" data-toggle="modal" data-target="#contactInfo" v-bind:hostipalId="item.hostipalId" v-on:click="displayContactInfo(item.hostipalId)">联系信息</a>
+                                <a href="#" class="btn btn-primary contactInfo" data-toggle="modal" data-target="#contactInfo" v-bind:hostipalId="item.id" v-on:click="displayContactInfo(item.id)">联系信息</a>
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="caret"></span>
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="#" data-target="#edithospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.hostipalId)">编辑</a>
+                                        <a href="#" data-target="#edithospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.id)">编辑</a>
                                     </li>
                                     <li>
                                         <a href="#" data-target="#receipts" data-toggle="modal" class="receipts">发票信息</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#hospitalProductsInfo" data-toggle="modal" class="products" @click="applypProduct(item.hostipalId)">申请产品</a>
+                                        <a href="#" data-target="#hospitalProductsInfo" data-toggle="modal" class="products" @click="applypProduct(item.id)">申请产品</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.hostipalId)">审核产品</a>
+                                        <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.id)">审核产品</a>
                                     </li>
                                     <li>
                                         <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList">审核列表</a>
@@ -171,21 +171,19 @@ export default {
                }
       },
   mounted:function(){
-    //获取医院数据
-      this.$http.get('./static/hospitalInfo.json').then(response => {               
-                // get body data                                  
-                var _this = this;           
-                var data = response.body;
-                var hospital = data.infobody;
-                var page = data.infopage;               
-                _this.hostipallist = hospital;
-                _this.allpage = page.allpage;
-                _this.current = page.current;
-                _this.showItem = page.showItem;
-                
-              }, response => {
-                // error callback
-              });      
+  //  获取医院数据
+     var url = this.GLOBAL.hostIp;
+      var _this = this;
+      // var hospitallist = this.hostipallist;
+      
+        this.$http.post(url+"/HospitalSetting/Query",{"condition":""},{emulateJSON: true}).then(response => {
+          var body = response.body;
+          if (body.isSuccess) {
+            var data = body.data;
+            _this.hostipallist = data;
+          };
+      })
+    
 
   },
   methods:{
@@ -237,26 +235,20 @@ export default {
     //发送关键词  返回结果
     serchHospital(){      
       var searchmsg = this.searchmsg;
+      var url = this.GLOBAL.hostIp;
+      var _this = this;
       // var hospitallist = this.hostipallist;
       if (searchmsg === "") {
         alert("请输入查询关键词")
       }else{
-        this.$http.get('./static/hospitalInfo.json',{params:{keywords:searchmsg}}).then(response => {
-        var data = response.body;
-        this.hospitalList = data.infobody;
-
-      });
-      }
-      
-      // for (var i = 0; i <= hospitallist.length+1; i++) {
-      //   hospitallist.forEach(function(item,index,array){        
-      //   if (searchmsg !== "") {
-      //     if(!(hospitallist[index].name.indexOf(searchmsg) >= 0)){
-      //       array.splice(index, 1);
-      //       }
-      //     };      
-      //   })     
-      // };      
+        this.$http.post(url+"/HospitalSetting/Query",{"condition":searchmsg},{emulateJSON: true}).then(response => {
+          var body = response.body;
+          if (body.isSuccess) {
+            var data = body.data;
+            _this.hostipallist = data;
+          };
+      })
+    }
     },
     //获取医院信息进行编辑
     editHospital(id){

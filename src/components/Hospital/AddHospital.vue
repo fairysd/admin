@@ -109,7 +109,8 @@ export default {
   },
   methods:{
     //添加医院
-    addhospital(){        
+    addhospital(){      
+    var url = this.GLOBAL.hostIp;  
         //验证必填框是否填写      
         if (this.hospitalInfos.hospitalName.name =="") {
                 this.hospitalInfos.hospitalName.iserror = true;
@@ -126,17 +127,24 @@ export default {
         var addHospitalInfo = {
           name:this.hospitalInfos.hospitalName.name,
           description:this.hospitalInfos.hospitalDesc,
-          abbr:this.hospitalInfos.hospitalAbbr,
-          contactName:this.hospitalInfos.contactName.name,
-          contactAddress:this.hospitalInfos.contactAddress,
-          contactMethod1:this.hospitalInfos.contactMethod1,
-          contactMethod2:this.hospitalInfos.contactMethod2,
-          contactMethod3:this.hospitalInfos.contactMethod3,
-          contactMethod4:this.hospitalInfos.contactMethod4
+          ShortCode:this.hospitalInfos.hospitalAbbr,
+          Type:10,
+          ContactInfo:{
+            ContactPerson:this.hospitalInfos.contactName.name,
+            Address:this.hospitalInfos.contactAddress,
+            ContactWay1:this.hospitalInfos.contactMethod1,
+            ContactWay2:this.hospitalInfos.contactMethod2,
+            ContactWay3:this.hospitalInfos.contactMethod3,
+            ContactWay4:this.hospitalInfos.contactMethod4
+          }
+          
       };
-       this.$http.post('./static/addHospital.json',addHospitalInfo).then(response => {               
+       this.$http.post(url+"/HospitalSetting/Hospitalsave",addHospitalInfo,{emulateJSON: true}).then(response => {               
                 // get body data                    
-              console.log("添加成功")
+              var body = response.body;
+              if (body.isSuccess) {
+                alert("添加成功")
+              };
                               
               }, response => {
                 // error callback
