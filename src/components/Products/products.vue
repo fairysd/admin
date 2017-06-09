@@ -6,7 +6,7 @@
     <div class="form-inline searchbox">
         <div class="form-group">
             <label for="formNo" class="sr-only">产品</label>
-            <input type="text" id="condition" class="form-control" placeholder="产品" v-model="this.searchmsg">
+            <input type="text" id="condition" class="form-control" placeholder="产品" v-model="searchmsg">
         </div>
         <button class="btn btn-primary pull-right" id="btnQuery" @click="serchProduct">查询</button>
         <br style="clear:both;">
@@ -31,17 +31,18 @@
             </thead>
             <tbody><tr v-for="item in productList">
         <td v-text="item.name"></td>
-        <td v-text="item.wholeName"></td>
-        <td v-text="item.abbr"></td>
+        <td v-text="item.fullName"></td>
+        <td v-text="item.shortCode"></td>
         <td v-text="item.brand"></td>
         <td v-text="item.miniPackageSpec"></td>
         <td v-text="item.miniPackageUnit"></td>
         <td v-text="item.miniPackageCount"></td>
-        <td v-text="item.standardUnit"></td>
-        <td v-text="item.class"></td>
-        <td v-text="item.domestic"></td>
+        <td v-text="item.packageUnit"></td>
+        <td v-text="item.category"></td>
+        <td v-if="item.isLocal">是</td>
+        <td v-else="item.isLocal">否</td>
         <td>
-            <a href="#" class="btn btn-primary edit" data-target="#editProductInfo" data-toggle="modal" @click="editProduct(item.productId)">编辑</a>
+            <a href="#" class="btn btn-primary edit" data-target="#editProductInfo" data-toggle="modal" @click="editProduct(item.id)">编辑</a>
         </td>
     </tr></tbody>
         </table>
@@ -75,7 +76,7 @@ export default {
     return {
     current:1,
     showItem:5,
-    allpage:1,
+    allpage:"",
     searchmsg:"",
       productList:[],
       productModel:{
@@ -124,11 +125,15 @@ export default {
                }
       },
   mounted:function(){
-    //获取医院数据
-      this.$http.get('./static/productList.json').then(response => {               
+    //获取产品数据
+    var _this = this;
+    var url = this.GLOBAL.hostIp;
+      this.$http.post(url+"/Product/Query",{},{emulateJSON: true}).then(response => {               
                 // get body data                                  
-                var _this = this;               
-                var data = response.body;
+                var body = response.body;
+                var page = body.pageInfo;
+                var data = body.data;
+                _this.allpage = page.pageCount;
                 _this.productList = data;
                 
               }, response => {
@@ -168,20 +173,21 @@ export default {
      editProduct(id){
         var _this = this;
         var id = id;
-        this.$http.get('./static/editProductInfo.json',{params:{id:id}}).then(response => {
-            var data = response.body;
-               if (data.editinfostatus) {
-                    var editinfo = data.editinfobody; 
-                    _this.productModel.name.value = editinfo.name;
-                    _this.productModel.wholeName = editinfo.wholeName;
-                    _this.productModel.abbr = editinfo.abbr;
-                    _this.productModel.brand = editinfo.brand;
-                    _this.productModel.miniPackageSpec = editinfo.miniPackageSpec;
-                    _this.productModel.miniPackageUnit.value = editinfo.miniPackageUnit;
-                    _this.productModel.miniPackageCount.value = editinfo.miniPackageCount;
-                    _this.productModel.standardUnit = editinfo.standardUnit;
-                    _this.productModel.class = editinfo.class;
-                    _this.productModel.domestic =  editinfo.domestic;
+        var url = this.GLOBAL.hostIp;
+        this.$http.post(url+"/Product/Edit",{"id":id},{emulateJSON: true}).then(response => {
+            var body = response.body;
+               if (body.isSuccess) {
+                var data = body.data;
+                    _this.productModel.name.value = data.name;
+                    _this.productModel.wholeName = data.fullName;
+                    _this.productModel.abbr = data.shortCode;
+                    _this.productModel.brand = data.brand;
+                    _this.productModel.miniPackageSpec = data.miniPackageSpec;
+                    _this.productModel.miniPackageUnit.value = data.miniPackageUnit;
+                    _this.productModel.miniPackageCount.value = data.miniPackageCount;
+                    _this.productModel.standardUnit = data.packageUnit;
+                    _this.productModel.class = data.category;
+                    _this.productModel.domestic =  data.isLocal;
                };                
               }, response => {
                 // error callback
@@ -189,10 +195,17 @@ export default {
     },
        serchProduct(){      
       var searchmsg = this.searchmsg;
+      var url = this.GLOBAL.hostIp;
+      var _this = this;
       if (searchmsg === "") {
         alert("请输入查询关键词")
       }else{
-        this.$http.get('./static/prdut.json',{params:{keywords:searchmsg}}).then(response => {        
+        this.$http.post(url+"/Product/Query",{"condition":searchmsg},{emulateJSON: true}).then(response => {        
+          var body = response.body;
+          if (body.isSuccess) {
+            var data = body.data;
+            _this.productList = data;
+          };
       });      
       }
     },

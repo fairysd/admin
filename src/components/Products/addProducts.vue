@@ -101,7 +101,8 @@ export default {
     }
   },
   methods:{
-     applyAddProduct(){              
+     applyAddProduct(){     
+        var url = this.GLOBAL.hostIp;         
               //验证必填框是否填写      
         if (this.$parent.$data.productModel.name.value =="") {
                 this.$parent.$data.productModel.name.iserror = true;
@@ -121,20 +122,21 @@ export default {
     var isclick = this.$parent.$data.productModel.name.iserror||this.$parent.$data.productModel.miniPackageUnit.iserror||this.$parent.$data.productModel.miniPackageCount.iserror;
       if(!isclick){
          var data = {
-        name:this.$parent.$data.productModel.name.value,
-        wholeName:this.$parent.$data.productModel.wholeName,
-        abbr:this.$parent.$data.productModel.abbr,
-        brand:this.$parent.$data.productModel.brand,
-        miniPackageSpec:this.$parent.$data.productModel.miniPackageSpec,
-        miniPackageUnit:this.$parent.$data.productModel.miniPackageUnit.value,
-        miniPackageCount:this.$parent.$data.productModel.miniPackageCount.value,
-        standardUnit:this.$parent.$data.productModel.standardUnit,
-        class:this.$parent.$data.productModel.class,
-        domestic:this.$parent.$data.productModel.domestic
+            id:0,
+            Name:this.$parent.$data.productModel.name.value,
+            FullName:this.$parent.$data.productModel.wholeName,
+            ShortCode:this.$parent.$data.productModel.abbr,
+            Brand:this.$parent.$data.productModel.brand,
+            MiniPackageSpec:this.$parent.$data.productModel.miniPackageSpec,
+            MiniPackageUnit:this.$parent.$data.productModel.miniPackageUnit.value,
+            MiniPackageCount:this.$parent.$data.productModel.miniPackageCount.value,
+            PackageUnit:this.$parent.$data.productModel.standardUnit,
+            Category:this.$parent.$data.productModel.class,
+            IsLocal:this.$parent.$data.productModel.domestic
       };
-       this.$http.post('./static/addProducts.json',data).then(response => {               
+       this.$http.post(url+"/Product/Save",data,{emulateJSON: true}).then(response => {               
                 // get body data                    
-              console.log("添加成功")
+              alert("添加成功")
                               
               }, response => {
                 // error callback

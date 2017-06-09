@@ -27,7 +27,7 @@
                         <td v-text="item.shortCode"></td>
                         <td>
                             <div class="btn-group">
-                                <a href="#" class="btn btn-primary contactInfo" data-toggle="modal" data-target="#contactInfo" v-bind:hostipalId="item.id" v-on:click="displayContactInfo(item.id)">联系信息</a>
+                                <a href="#" class="btn btn-primary contactInfo" data-toggle="modal" data-target="#contactInfo" v-bind:hostipalId="item.id" v-on:click="displayContactInfo(item.contactId)">联系信息</a>
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="caret"></span>
                                     <span class="sr-only">Toggle Dropdown</span>
@@ -211,19 +211,17 @@ export default {
     //联系信息，发送医院id获取该医院联系信息并展现
     displayContactInfo(id){
         var _this = this; 
-        
-              this.$http.get('./static/contactInfo.json',{params:{id:id}}).then(response => {               
+        var url = this.GLOBAL.hostIp;
+              this.$http.post(url+"/HospitalSetting/GetContactInfo",{"id":id},{emulateJSON: true}).then(response => {               
                 // get body data                    
-                var data = response.body;
-                if (data.infostatus) {                   
-                   var  infobody = data.infobody;
-                    _this.hospitalInfos.contactName.name = infobody.name;
-                    _this.hospitalInfos.contactAddress= infobody.address;
-                    _this.hospitalInfos.contactMethod1= infobody.type1;
-                    _this.hospitalInfos.contactMethod2= infobody.type2;
-                    _this.hospitalInfos.contactMethod3= infobody.type3;
-                    _this.hospitalInfos.contactMethod4= infobody.type4;
-                };
+                var data = response.body;        
+                    _this.hospitalInfos.contactName.name = data.ContactPerson;
+                    _this.hospitalInfos.contactAddress= data.Address;
+                    _this.hospitalInfos.contactMethod1= data.ContactWay1;
+                    _this.hospitalInfos.contactMethod2= data.ContactWay1;
+                    _this.hospitalInfos.contactMethod3= data.ContactWay1;
+                    _this.hospitalInfos.contactMethod4= data.ContactWay1;
+                
                 
 
               }, response => {
@@ -253,26 +251,26 @@ export default {
     //获取医院信息进行编辑
     editHospital(id){
         var _this = this;
-        this.$http.get('./static/editHospitalInfo.json',{params:{id:id}}).then(response => {
-            var data = response.body;
-               if (data.editinfostatus) {
-                    var editinfo = data.editinfobody;
-                    _this.hospitalInfos.hospitalName.name = editinfo.name;
-                    _this.hospitalInfos.hospitalDesc = editinfo.description;
-                    _this.hospitalInfos.hospitalAbbr = editinfo.abbr;
-                    _this.hospitalInfos.contactName.name = editinfo.contactName;
-                    _this.hospitalInfos.contactAddress = editinfo.contactAddress;
-                    _this.hospitalInfos.contactMethod1 = editinfo.contactMethod1;
-                    _this.hospitalInfos.contactMethod2 = editinfo.contactMethod2;
-                    _this.hospitalInfos.contactMethod3 = editinfo.contactMethod3;
-                    _this.hospitalInfos.contactMethod4 = editinfo.contactMethod4;
-                    _this.hospitalInfos.hostipalId =  editinfo.hostipalId;
+        var url = this.GLOBAL.hostIp;
+        this.$http.post(url+'/HospitalSetting/QueryHospitalById',{"id":id},{emulateJSON: true}).then(response => {
+            var body = response.body;
+               if (body.IsSuccess) {
+                    _this.hospitalInfos.hospitalName.name = body.Name;
+                    _this.hospitalInfos.hospitalDesc = body.Description;
+                    _this.hospitalInfos.hospitalAbbr = body.ShortCode;
+                    _this.hospitalInfos.contactName.name = body.ContactInfo.ContactPerson;
+                    _this.hospitalInfos.contactAddress = body.ContactInfo.Address;
+                    _this.hospitalInfos.contactMethod1 = body.ContactInfo.ContactWay1;
+                    _this.hospitalInfos.contactMethod2 = body.ContactInfo.ContactWay2;
+                    _this.hospitalInfos.contactMethod3 = body.ContactInfo.ContactWay3;
+                    _this.hospitalInfos.contactMethod4 = body.ContactInfo.ContactWay4;
+                    _this.hospitalInfos.hostipalId =  body.Id;
                };                
               }, response => {
                 // error callback
               });
     },
-    //申请产品，获取申请单位列表和产品列表
+    //申请产品，获取申请单位列表和产品列表 
     applypProduct(id){
         var _this = this;
 

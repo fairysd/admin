@@ -92,6 +92,7 @@ export default {
   methods:{
     //添加医院
      applyEdithospital(){        
+        var url = this.GLOBAL.hostIp;
         //验证必填框是否填写      
         if (this.$parent.$data.hospitalInfos.hospitalName.name =="") {
                 this.$parent.$data.hospitalInfos.hospitalName.iserror = true;
@@ -107,18 +108,23 @@ export default {
       if(!isclick){
         var data = {
           name:this.$parent.$data.hospitalInfos.hospitalName.name,
-          description:this.$parent.$data.hospitalInfos.hospitalDesc,
-          abbr:this.$parent.$data.hospitalInfos.hospitalAbbr,
-          contactName:this.$parent.$data.hospitalInfos.contactName.name,
-          contactAddress:this.$parent.$data.hospitalInfos.contactAddress,
-          contactMethod1:this.$parent.$data.hospitalInfos.contactMethod1,
-          contactMethod2:this.$parent.$data.hospitalInfos.contactMethod2,
-          contactMethod3:this.$parent.$data.hospitalInfos.contactMethod3,
-          contactMethod4:this.$parent.$data.hospitalInfos.contactMethod4,
-          hostipalId:this.$parent.$data.hospitalInfos.hostipalId       
+          Description:this.$parent.$data.hospitalInfos.hospitalDesc,
+          ShortCode:this.$parent.$data.hospitalInfos.hospitalAbbr,
+          ContactInfo:{
+              ContactPerson:this.$parent.$data.hospitalInfos.contactName.name,
+              Address:this.$parent.$data.hospitalInfos.contactAddress,
+              ContactWay1:this.$parent.$data.hospitalInfos.contactMethod1,
+              ContactWay2:this.$parent.$data.hospitalInfos.contactMethod2,
+              ContactWay3:this.$parent.$data.hospitalInfos.contactMethod3,
+              ContactWay4:this.$parent.$data.hospitalInfos.contactMethod4,
+          },         
+          Id:this.$parent.$data.hospitalInfos.hostipalId       
       };
-        this.$http.post("url",data).then(response => {
-            alert("修改成功")
+        this.$http.post(url+"/HospitalSetting/Hospitalsave",data,{emulateJSON: true}).then(response => {
+            var body = response.body;
+            if (body.isSuccess) {
+                alert("修改成功")
+            };
         },response => {
                 // error callback
                 console.log("请求已经发送")
