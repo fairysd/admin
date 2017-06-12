@@ -1,18 +1,18 @@
 [
        {  
           "item":"院方",
-          "path":"/hospital"
+          "path":"/container/hospital"
         },
        {  
           "item":"院方单位",
-          "path":"/partment"
+          "path":"/container/partment"
         },   
         {  
           "item":"产品",
-          "path":"/products"
+          "path":"/container/products"
         },
         {  
           "item":"用户",
-          "path":"/user"
+          "path":"/container/user"
         }
       ]    

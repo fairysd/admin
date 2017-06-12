@@ -182,7 +182,13 @@ export default {
             var data = body.data;
             _this.hostipallist = data;
           };
-      })
+      }, response => {
+             var status = response.status;
+             if (status == "404") {
+              alert("长时间未操作，请重新登陆")
+              this.$router.push('/login')
+             };
+              });
     
 
   },
@@ -220,10 +226,7 @@ export default {
                     _this.hospitalInfos.contactMethod1= data.ContactWay1;
                     _this.hospitalInfos.contactMethod2= data.ContactWay1;
                     _this.hospitalInfos.contactMethod3= data.ContactWay1;
-                    _this.hospitalInfos.contactMethod4= data.ContactWay1;
-                
-                
-
+                    _this.hospitalInfos.contactMethod4= data.ContactWay1;      
               }, response => {
                 // error callback
               });
