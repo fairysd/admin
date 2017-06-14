@@ -12,7 +12,7 @@
             &nbsp;&nbsp;
     &nbsp;&nbsp;
           </span>
-          <a v-text='loginstatus' class="logout" href="/LIMS_V1_T/Main/Logout"></a>        
+          <button v-text='loginstatus' class="logout" @click="logout"></button>        
       </form>  
       </div> 
   </div>
@@ -24,12 +24,37 @@ export default {
   data () {
     return {
       title: '（测试）试剂管理系统',
-      username:'admin',
+      username:'',
       loginstatus:'注销'
     }
   },       
+  mounted:function(){
+  //  根据登陆角色，获取该角色操作权限
+    var _this = this;
+    var url = this.GLOBAL.hostIp;
+      this.$http.post(url+'/UserInfo/UserPrivilege',{},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data                                  
+                var _this = this;
+                var body = response.body;   
+                if (body.isSuccess) {  
+                  var userType = body.data.user;
+                  var name = userType.user_Account;
+                 _this.username = name;
+                }
+              }, response => {
+                // error callback
+              });
+  },
   methods:{
-    
+    logout(){
+      var url = this.GLOBAL.hostIp;
+      this.$http.post(url+"/Main/Logout",{},{emulateJSON: true,credentials: true}).then(response => {
+          var body = response.body;
+          if (body.IsSuccess) {
+            this.$router.push('/login')
+          };      
+      })
+    }
   }
 }
 </script>
@@ -50,5 +75,10 @@ export default {
   }
   .current-user-edit{
     cursor: pointer;
+  }
+  .system-header .logout{
+    background: transparent;
+    border:none;
+    color: #fff;
   }
 </style>

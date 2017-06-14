@@ -18,6 +18,8 @@
                 <tr>
                     <th>名称</th>
                     <th>全称</th>
+                    <th>注册证号</th>
+                    <th>有效日期</th>
                     <th class="col-80">缩写代码</th>
                     <th>品牌</th>
                     <th class="col-80">最小包装规格</th>
@@ -32,6 +34,8 @@
             <tbody><tr v-for="item in productList">
         <td v-text="item.name"></td>
         <td v-text="item.fullName"></td>
+        <td v-text="item.registerNumber"></td>
+        <td v-text="item.validDate"></td>
         <td v-text="item.shortCode"></td>
         <td v-text="item.brand"></td>
         <td v-text="item.miniPackageSpec"></td>
@@ -128,7 +132,7 @@ export default {
     //获取产品数据
     var _this = this;
     var url = this.GLOBAL.hostIp;
-      this.$http.post(url+"/Product/Query",{},{emulateJSON: true}).then(response => {               
+      this.$http.post(url+"/Product/Query",{},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                                  
                 var body = response.body;
                 var page = body.pageInfo;

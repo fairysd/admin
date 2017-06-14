@@ -53,7 +53,7 @@ export default {
         Account:this.account,
         Password:this.password
       }
-       this.$http.post(url+"/logon/Validate",data,{emulateJSON: true}).then(response => {
+       this.$http.post(url+"/Logon/Validate",data,{emulateJSON: true}).then(response => {
           var body = response.body;
           if (body.IsSuccess) {
             this.$router.push('/container')
@@ -74,3 +74,4 @@ export default {
   border-radius: 10px;
 }
 </style>
+

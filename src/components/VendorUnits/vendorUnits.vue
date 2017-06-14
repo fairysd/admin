@@ -1,23 +1,23 @@
 <template>
   <div class="partment row">
     <div class="module-title-bar">
-      <label class="title">院方单位</label>
+      <label class="title">供应商单位</label>
     </div>
     <div class="form-inline">
         <div class="form-group">
             <label for="formNo">院方</label>
-            <select class="form-control" id="hospitals" v-model="searchInfo.parentId" v-on:change="getParentId()">
-            <option v-for="item in hospitals" v-bind:value="item.id" v-text="item.name"></option></select>
+            <select class="form-control" id="hospitals">
+            <option v-for="item in hospitals" v-bind:value="item.value" v-text="item.name"></option></select>
         </div>
         <div class="form-group">
             <label for="formNo" class="sr-only">单位信息</label>
-            <input type="text" class="form-control" placeholder="单位信息" v-model="searchInfo.condition">
+            <input type="text" class="form-control" placeholder="单位信息" v-model="searchmsg">
         </div>
         <button class="btn btn-primary pull-right" id="btnQuery" @click="serchPartment">查询</button>
         <br style="clear:both;">
     </div>
     <div style="margin:1em 0;">
-    <button class="btn btn-primary" id="btnAdd" @click="clearData">新增</button>
+    <button class="btn btn-primary" id="btnAdd" data-target="#hospitalUnitInfo" data-toggle="modal" @click="clearData">新增</button>
     <table id="hospitalUnitList" class="table table-striped">
         <thead>
             <tr>
@@ -33,18 +33,18 @@
         <tbody><tr v-for='item in partmentlist'>
         <td v-text='item.name'></td>
         <td v-text='item.description'></td>
-        <td v-text='item.shortCode'></td>
-        <td v-text='item.receiptTitle'></td>
-        <td v-text='item.tax'></td>
-        <td v-text='item.vendorName'></td>        
+        <td v-text='item.abbr'></td>
+        <td v-text='item.contact'></td>
+        <td v-text='item.interest'></td>
+        <td v-text='item.description'></td>        
         <td>
             <div class="btn-group">
-                <a href="#" class="btn btn-primary edit" data-target="#edithospitalUnitInfo" data-toggle="modal" @click="editPartment(item.id)">编辑</a>
+                <a href="#" class="btn btn-primary edit" data-target="#edithospitalUnitInfo" data-toggle="modal" @click="editPartment(item.partmentId)">编辑</a>
                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="caret"></span>
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
-                <ul class="dropdown-menu"><li><a href="#" data-target="#contactInfo" data-toggle="modal" class="contactInfo" @click="displayContactInfo(item.id)">联系信息</a></li><li><a href="#" data-target="#systemFunctionsInfo" data-toggle="modal" class="systemFunctions" @click="relFunction(item.id)">关联功能</a></li></ul>
+                <ul class="dropdown-menu"><li><a href="#" data-target="#contactInfo" data-toggle="modal" class="contactInfo" @click="displayContactInfo(item.partmentId)">联系信息</a></li><li><a href="#" data-target="#systemFunctionsInfo" data-toggle="modal" class="systemFunctions" @click="relFunction(item.partmentId)">关联功能</a></li></ul>
             </div>
         </td>
     </tr></tbody>
@@ -59,39 +59,20 @@
         </ul></nav>
         </div>
 </div>
-<!-- 新增modal start -->
-<addPartment></addPartment>
-<!-- 新增modal end -->
-<!-- 编辑modal start -->
-<editPartment></editPartment>
-<!-- 编辑modal end -->
-<!-- 联系信息modal start -->
-<contactInfo></contactInfo>
-<!-- 联系信息modal end -->
-<!-- 关联功能modal start -->
-<relativePartment></relativePartment>
-<!-- 关联功能modal end -->
+
   </div>
 </template>
 
 <script>
- import addPartment from './addPartment'
- import editPartment from './editPartment'
- import contactInfo from './contactInfo'
- import relativePartment from './relativePartment'
 export default {
-  name: 'partment',
-  components: {addPartment,editPartment,contactInfo,relativePartment},
+  name: 'vendorUnits',
+  components: {},
   data () {
     return {
       current:1,
     showItem:5,
     allpage:1,
-    parentId:"",
-      searchInfo:{
-        parentId:"",
-        condition:""
-      },
+      searchmsg: '',
       //院方单位数据模型
       partmentModel:{
         name:{
@@ -146,17 +127,19 @@ export default {
                }
       },
    mounted:function(){
-    //获取可选医院列表
-      var url = this.GLOBAL.hostIp;
-      var _this = this; 
-      this.$http.post(url+'/HospitalSetting/UnitList',{},{emulateJSON: true,credentials: true}).then(response => {               
-                // get body data                
-                var body = response.body;
-                if (body.isSuccess) {                  
-                var hostipalList = body.data;
+    //获取可选医院列表和默认部门列表以及分页信息
+      this.$http.get('./static/partment.json').then(response => {               
+                // get body data                                  
+                var _this = this;               
+                var data = response.body;
+                var partmentlist = data.partmentlist;
+                var hostipalList = data.hospitals;
+                var page = data.infopage;        
+                _this.allpage = page.allpage;
+                _this.current = page.current;
+                _this.showItem = page.showItem;
                 _this.hospitals = hostipalList;
-                };
-                            
+                _this.partmentlist = partmentlist;               
               }, response => {
                 // error callback
               });  
@@ -164,11 +147,7 @@ export default {
   methods:{
       //添加院方单位之前，清空缓存
       clearData(){
-        if (this.parentId == "") {
-          alert("请选择要添加单位的医院");
-          return false;
-        }else{
-          this.partmentModel = {
+        this.partmentModel = {
         name:{
             name:"",
             iserror:false
@@ -189,50 +168,52 @@ export default {
         contactMethod2:"",
         contactMethod3:"",
         contactMethod4:""
-      };
-$("#hospitalUnitInfo").modal("toggle")
-    };
-        
+      }
       },
       
-    getParentId(){
-        var val = $(event.currentTarget).val();
-        this.parentId = val;
-    },
+    
        //部门查询
        //发送查询关键字，返回查询结果
     serchPartment(){      
-       var searchmsg = this.searchInfo;
-      var _this = this;
-      var url = this.GLOBAL.hostIp;
-        this.$http.post(url+'/HospitalSetting/QueryUnits',searchmsg,{emulateJSON: true,credentials: true}).then(response => {
-        var body = response.body;
-        if (body.isSuccess) {
-           _this.partmentlist = body.data;           
-        };
-      },response => {
-                // error callback
-              });      
-    
+       var searchmsg = this.searchmsg;
+      if (searchmsg === "") {
+        alert("请输入查询关键词")
+      }else{
+        this.$http.get('./static/partment.json',{params:{keywords:searchmsg}}).then(response => {
+        var data = response.body;
+        this.partmentlist = data.partmentlist;
+
+      });
+      }
+      // var searchmsg = this.searchmsg;
+      // var partmentlist = this.partmentlist;
+      // for (var i = 0; i <= partmentlist.length+1; i++) {
+      //   partmentlist.forEach(function(item,index,array){        
+      //   if (searchmsg !== "") {
+      //     if(!(partmentlist[index].name.indexOf(searchmsg) >= 0)){
+      //       array.splice(index, 1);
+      //       }
+      //     };      
+      //   })     
+      // };      
     },
     //获取部门息进行编辑
     editPartment(id){
         var _this = this;
-        var url = this.GLOBAL.hostIp;
-        this.$http.post(url+'/VendorSetting/UnitQueryById',{id:id},{emulateJSON: true,credentials: true}).then(response => {
-            var body = response.body;
-               if (body.isSuccess) {
-                    var editinfo = body.data;
+        this.$http.get('./static/editPartmentInfo.json',{params:{id:id}}).then(response => {
+            var data = response.body;
+               if (data.editinfostatus) {
+                    var editinfo = data.editinfobody;
                     _this.partmentModel.name.name = editinfo.name;
                     _this.partmentModel.desc = editinfo.description;
-                    _this.partmentModel.abbr = editinfo.shortCode;
-                    _this.partmentModel.contactName.name = editinfo.contactInfo.contactPerson;
-                    _this.partmentModel.contactAddress = editinfo.contactInfo.address;
-                    _this.partmentModel.contactMethod1 = editinfo.contactInfo.contactWay1;
-                    _this.partmentModel.contactMethod2 = editinfo.contactInfo.contactWay2;
-                    _this.partmentModel.contactMethod3 = editinfo.contactInfo.contactWay3;
-                    _this.partmentModel.contactMethod4 = editinfo.contactInfo.contactWay4;
-                    _this.partmentModel.hostipalId =  editinfo.rootId;
+                    _this.partmentModel.abbr = editinfo.abbr;
+                    _this.partmentModel.contactName.name = editinfo.contactName;
+                    _this.partmentModel.contactAddress = editinfo.contactAddress;
+                    _this.partmentModel.contactMethod1 = editinfo.contactMethod1;
+                    _this.partmentModel.contactMethod2 = editinfo.contactMethod2;
+                    _this.partmentModel.contactMethod3 = editinfo.contactMethod3;
+                    _this.partmentModel.contactMethod4 = editinfo.contactMethod4;
+                    _this.partmentModel.hostipalId =  editinfo.hostipalId;
                     _this.partmentModel.tickets.name = editinfo.tickets;
                     _this.partmentModel.type = editinfo.type;
                };                
@@ -325,3 +306,4 @@ $("#hospitalUnitInfo").modal("toggle")
   width: 31%;
  }
 </style>
+。

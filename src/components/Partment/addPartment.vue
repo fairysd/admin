@@ -112,7 +112,7 @@ export default {
   name: 'addPartment',
   data () {
     return {    
-         partmentModel:{
+        partmentModel:{
         name:{
             name:"",
             iserror:false
@@ -139,6 +139,7 @@ export default {
   methods:{
     //添加医院部门
       addPartment(){
+        var url = this.GLOBAL.hostIp;
         var _this = this.$parent.$data;
               //验证必填框是否填写      
         if (this.partmentModel.name.name =="") {
@@ -159,20 +160,22 @@ export default {
     var isclick = this.partmentModel.name.iserror||this.partmentModel.contactName.iserror||this.partmentModel.tickets.iserror;
       if(!isclick){
         var  data = {
-          name:this.partmentModel.name.name,
-          description:this.partmentModel.hospitalDesc,
-          abbr:this.partmentModel.hospitalAbbr,
-          tickets:this.partmentModel.tickets.name,
-          type:this.partmentModel.type,
-          contactName:this.partmentModel.contactName.name,
-          contactAddress:this.partmentModel.contactAddress,
-          contactMethod1:this.partmentModel.contactMethod1,
-          contactMethod2:this.partmentModel.contactMethod2,
-          contactMethod3:this.partmentModel.contactMethod3,
-          contactMethod4:this.partmentModel.contactMethod4,
-          hostipalId:this.partmentModel.hostipalId       
+          Name:this.partmentModel.name.name,
+          Description:this.partmentModel.hospitalDesc,
+          ShortCode:this.partmentModel.hospitalAbbr,
+          ReceiptId:this.partmentModel.tickets.name,
+          Type:this.partmentModel.type,
+          ContactInfo:{
+              ContactPerson:this.partmentModel.contactName.name,
+              Address:this.partmentModel.contactAddress,
+              ContactWay1:this.partmentModel.contactMethod1,
+              ContactWay2:this.partmentModel.contactMethod2,
+              ContactWay3:this.partmentModel.contactMethod3,
+              ContactWay4:this.partmentModel.contactMethod4,
+          },          
+          ParentId:_this.parentId   
       };
-       this.$http.post('./static/addPartment.json',data).then(response => {               
+       this.$http.post(url+'/HospitalSetting/SaveHospitalUnit',data,{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                    
               console.log("添加成功")
                               

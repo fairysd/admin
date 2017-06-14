@@ -5,12 +5,11 @@ import container from '@/components/content'
 import login from '@/components/login'
 import hospital from '@/components/Hospital/hospital'
 import partment from '@/components/Partment/partment'
+import vendors from '@/components/Vendors/Vendors'
+import vendorUnits from '@/components/VendorUnits/vendorUnits'
 import products from '@/components/Products/products'
 import user from '@/components/User/user'
-import VueResource from 'vue-resource';
-import Vuex from 'vuex';
-Vue.use(Vuex);
-Vue.use(VueResource);
+
 Vue.use(Router);
 
 
@@ -19,7 +18,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: container,  
+      component: login,  
     },
     {
       path: '/container',
@@ -42,9 +41,18 @@ export default new Router({
           component: products
         },
         {
+          path: '/container/vendors',
+          component: vendors
+        },
+        {
+          path: '/container/vendorUnits',
+          component: vendorUnits
+        },
+        {
           path: '/container/user',
           component: user
         }
+
       ]
     },
     {

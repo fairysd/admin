@@ -117,6 +117,7 @@ export default {
   methods:{   
        //请求编辑部门信息
       applyEditPartment(){
+        var url = this.GLOBAL.hostIp;
         var _this = this.$parent.$data;
               //验证必填框是否填写      
         if (_this.partmentModel.name.name =="") {
@@ -137,20 +138,22 @@ export default {
     var isclick = _this.partmentModel.name.iserror||_this.partmentModel.contactName.iserror||_this.partmentModel.tickets.iserror;
       if(!isclick){
         var data = {
-          name:_this.partmentModel.name.name,
-          description:_this.partmentModel.hospitalDesc,
-          abbr:_this.partmentModel.hospitalAbbr,
-          tickets:_this.partmentModel.tickets.name,
-          type:_this.partmentModel.type,
-          contactName:_this.partmentModel.contactName.name,
-          contactAddress:_this.partmentModel.contactAddress,
-          contactMethod1:_this.partmentModel.contactMethod1,
-          contactMethod2:_this.partmentModel.contactMethod2,
-          contactMethod3:_this.partmentModel.contactMethod3,
-          contactMethod4:_this.partmentModel.contactMethod4,
-          hostipalId:_this.partmentModel.hostipalId       
+          Name:_this.partmentModel.name.name,
+          Description:_this.partmentModel.hospitalDesc,
+          ShortCode:_this.partmentModel.hospitalAbbr,
+          ReceiptId:_this.partmentModel.tickets.name,
+          Type:_this.partmentModel.type,
+          ContactInfo:{
+              ContactPerson:_this.partmentModel.contactName.name,
+              Address:_this.partmentModel.contactAddress,
+              ContactWay1:_this.partmentModel.contactMethod1,
+              ContactWay2:_this.partmentModel.contactMethod2,
+              ContactWay3:_this.partmentModel.contactMethod3,
+              ContactWay4:_this.partmentModel.contactMethod4,
+          },          
+          RootId:_this.partmentModel.hostipalId       
       };
-         this.$http.post("url",data).then(response => {
+         this.$http.post(url+'/HospitalSetting/SaveHospitalUnit',data,{emulateJSON: true,credentials: true}).then(response => {
             alert("修改成功")
         },response => {
                 // error callback

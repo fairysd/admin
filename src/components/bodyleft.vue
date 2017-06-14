@@ -20,14 +20,87 @@ export default {
   },
    mounted:function(){
     //根据登陆角色，获取该角色操作权限
-
-    //获取session中的用户信息
-    var id = "userid";
-      this.$http.get('./static/roleAuthority.json',{params:{id:id}}).then(response => {               
+    var url = this.GLOBAL.hostIp;
+      this.$http.post(url+'/UserInfo/UserPrivilege',{},{emulateJSON: true,credentials:true}).then(response => {               
                 // get body data                                  
                 var _this = this;
-                var data = response.body;   
-                _this.items = data;
+                var body = response.body;   
+                if (body.isSuccess) {  
+                  var userType = body.data.unit;
+                  var type = userType.unit_Type;
+                  switch(type)
+                  {
+                    case "1":
+                    _this.items = [
+                                   {  
+                                      "item":"院方",
+                                      "path":"/container/hospital"
+                                    },
+                                   {  
+                                      "item":"院方单位",
+                                      "path":"/container/partment"
+                                    },   
+                                    {  
+                                      "item":"供应商",
+                                      "path":"/container/vendors"
+                                    }, 
+                                    {  
+                                      "item":"供应商单位",
+                                      "path":"/container/vendorUnits"
+                                    }, 
+                                    {  
+                                      "item":"产品",
+                                      "path":"/container/products"
+                                    },
+                                    {  
+                                      "item":"用户",
+                                      "path":"/container/user"
+                                    }
+                                  ];
+                                  break;
+                    case "10":
+                    _this.items = [
+                                   {  
+                                      "item":"院方",
+                                      "path":"/container/hospital"
+                                    },
+                                   {  
+                                      "item":"院方单位",
+                                      "path":"/container/partment"
+                                    },
+                                    {  
+                                      "item":"产品",
+                                      "path":"/container/products"
+                                    },
+                                    {  
+                                      "item":"用户",
+                                      "path":"/container/user"
+                                    }
+                                  ];
+                                  break;
+                    case "20":
+                    _this.items = [ 
+                                    {  
+                                      "item":"供应商",
+                                      "path":"/container/vendors"
+                                    }, 
+                                    {  
+                                      "item":"供应商单位",
+                                      "path":"/container/vendorUnits"
+                                    }, 
+                                    {  
+                                      "item":"产品",
+                                      "path":"/container/products"
+                                    },
+                                    {  
+                                      "item":"用户",
+                                      "path":"/container/user"
+                                    }
+                                  ];
+                                  break;
+                
+                  }
+                };
                 
               }, response => {
                 // error callback

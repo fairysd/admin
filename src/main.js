@@ -7,12 +7,14 @@ import $ from 'jquery'
 import './assets/css/bootstrap.min.css'
 import './assets/js/bootstrap.min'
 import Vuex from 'vuex';
+import VueResource from 'vue-resource';
+Vue.use(Vuex);
+Vue.use(VueResource);
 import global_ from './components/Global'
 Vue.prototype.GLOBAL = global_
 Vue.use(Vuex);
 
 Vue.config.productionTip = false
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

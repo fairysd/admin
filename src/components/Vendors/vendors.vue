@@ -2,7 +2,7 @@
     <div class="hostipal row">
         <div class="col-sm-12">
             <div class="col-sm-3  title">
-                <h4>院方</h4>
+                <h4>供应商</h4>
                 <input type="text" class="form-control" v-model="searchmsg">
                 <button data-target="#hospitalInfo" @click="cleardata" data-toggle="modal" class="btn btn-primary" id="btnAdd">新增</button>
             </div>
@@ -64,42 +64,14 @@
         </ul></nav>
         </div>
         </div>
-        <!-- 增加modal start-->
-        <addHospital></addHospital> 
-        <!-- 增加modal end-->
-         <!-- 编辑modal start-->
-        <editHospital></editHospital>
-        <!-- 编辑modal end-->
-        <!-- 联系信息modal start-->
-        <contactInfo></contactInfo>
-        <!-- 联系信息modal end-->
-        <!-- 开票信息modal start-->
-        <receipts></receipts>
-        <!-- 开票信息modal end-->
-        <!-- 申请产品modal start-->
-        <applyProduct></applyProduct>
-        <!-- 申请产品modal end-->
-        <!-- 产品审核modal start-->
-        <auditingProduct></auditingProduct>
-        <!-- 产品审核modal end-->
-        <!-- 审核列表modal start-->
-        <approveList></approveList>
-        
-        <!-- 审核列表modal end-->
+
   </div>
 </template>
 <script>
- import addHospital from './AddHospital'
- import editHospital from './editHospital'
- import contactInfo from './contactInfo'
- import receipts from './receipts'
- import applyProduct from './applyProduct'
- import auditingProduct from './auditingProduct'
- import approveList from './approveList'
 
 export default {   
-  name: 'hostipal',
-  components: {addHospital,editHospital,contactInfo,receipts,applyProduct,auditingProduct,approveList},
+  name: 'vendors',
+  components: {},
   data () {
     return {
 
@@ -176,7 +148,7 @@ export default {
       var _this = this;
       // var hospitallist = this.hostipallist;
       
-        this.$http.post(url+"/HospitalSetting/Query",{"condition":""},{emulateJSON: true,credentials: true}).then(response => {
+        this.$http.post(url+"/HospitalSetting/Query",{"condition":""},{emulateJSON: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
