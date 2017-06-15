@@ -3,7 +3,7 @@
     <h4>设置</h4>
     <ul>
       <li v-for="item in items">
-        <router-link v-bind:to="item.path" v-text="item.item"></router-link>
+        <router-link v-bind:to="item.url" v-text="item.title"></router-link>
       </li>
     </ul>    
   </div>
@@ -16,90 +16,20 @@ export default {
   data () {
     return {
       items:[],
+      isAdmin:""
     }
   },
    mounted:function(){
     //根据登陆角色，获取该角色操作权限
     var url = this.GLOBAL.hostIp;
-      this.$http.post(url+'/UserInfo/UserPrivilege',{},{emulateJSON: true,credentials:true}).then(response => {               
+      this.$http.post(url+'/Main/Menus',{},{emulateJSON: true,credentials:true}).then(response => {               
                 // get body data                                  
                 var _this = this;
                 var body = response.body;   
                 if (body.isSuccess) {  
-                  var userType = body.data.unit;
-                  var type = userType.unit_Type;
-                  switch(type)
-                  {
-                    case "1":
-                    _this.items = [
-                                   {  
-                                      "item":"院方",
-                                      "path":"/container/hospital"
-                                    },
-                                   {  
-                                      "item":"院方单位",
-                                      "path":"/container/partment"
-                                    },   
-                                    {  
-                                      "item":"供应商",
-                                      "path":"/container/vendors"
-                                    }, 
-                                    {  
-                                      "item":"供应商单位",
-                                      "path":"/container/vendorUnits"
-                                    }, 
-                                    {  
-                                      "item":"产品",
-                                      "path":"/container/products"
-                                    },
-                                    {  
-                                      "item":"用户",
-                                      "path":"/container/user"
-                                    }
-                                  ];
-                                  break;
-                    case "10":
-                    _this.items = [
-                                   {  
-                                      "item":"院方",
-                                      "path":"/container/hospital"
-                                    },
-                                   {  
-                                      "item":"院方单位",
-                                      "path":"/container/partment"
-                                    },
-                                    {  
-                                      "item":"产品",
-                                      "path":"/container/products"
-                                    },
-                                    {  
-                                      "item":"用户",
-                                      "path":"/container/user"
-                                    }
-                                  ];
-                                  break;
-                    case "20":
-                    _this.items = [ 
-                                    {  
-                                      "item":"供应商",
-                                      "path":"/container/vendors"
-                                    }, 
-                                    {  
-                                      "item":"供应商单位",
-                                      "path":"/container/vendorUnits"
-                                    }, 
-                                    {  
-                                      "item":"产品",
-                                      "path":"/container/products"
-                                    },
-                                    {  
-                                      "item":"用户",
-                                      "path":"/container/user"
-                                    }
-                                  ];
-                                  break;
-                
-                  }
+                var isAdmin = body.data.loginInfo.isAdmin;
+                var menu = body.data.mainMenus.menus[0].subMenus;
+                _this.items = menu;
                 };
                 
               }, response => {

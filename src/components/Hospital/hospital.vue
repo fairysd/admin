@@ -37,7 +37,7 @@
                                         <a href="#" data-target="#edithospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.id)">编辑</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#receipts" data-toggle="modal" class="receipts">发票信息</a>
+                                        <a href="#" data-target="#receipts" data-toggle="modal" class="receipts" @click="receipts(item.id)">发票信息</a>
                                     </li>
                                     <li>
                                         <a href="#" data-target="#hospitalProductsInfo" data-toggle="modal" class="products" @click="applypProduct(item.id)">申请产品</a>
@@ -47,6 +47,9 @@
                                     </li>
                                     <li>
                                         <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList">审核列表</a>
+                                    </li>
+                                    <li v-if="isAdmin">
+                                        <a href="#" data-target="#systemFunctionsInfo" data-toggle="modal" class="systemFunctions" @click="relFunction(item.id)">关联功能</a>
                                     </li>
                                 </ul>
                             </div>
@@ -83,9 +86,9 @@
         <auditingProduct></auditingProduct>
         <!-- 产品审核modal end-->
         <!-- 审核列表modal start-->
-        <approveList></approveList>
-        
+        <approveList></approveList>        
         <!-- 审核列表modal end-->
+        <relativeHospital></relativeHospital>
   </div>
 </template>
 <script>
@@ -96,13 +99,14 @@
  import applyProduct from './applyProduct'
  import auditingProduct from './auditingProduct'
  import approveList from './approveList'
+import relativeHospital from './relative'
 
 export default {   
   name: 'hostipal',
-  components: {addHospital,editHospital,contactInfo,receipts,applyProduct,auditingProduct,approveList},
+  components: {addHospital,editHospital,contactInfo,receipts,applyProduct,auditingProduct,approveList,relativeHospital},
   data () {
     return {
-
+      isAdmin:"",
       current:"",
       showItem:"",
       allpage:"",
@@ -126,26 +130,14 @@ export default {
           contactMethod3:'',
           contactMethod4:''
       },
-      applyProduct:{},
+      applyProduct:[],
       auditingProducts:{
         auditingHostipals:[],
         auditingProducts:[]
       },
-      applyProductInfo:{
-        inUse:true,
-        otherName:"",
-        className:""
-      },
-      receiptModel:[
-        {
-            title:"上海阿斯顿学院",
-            interest:"12"
-        },
-        {
-            title:"上海阿斯顿学院",
-            interest:"12"
-        }
-      ],
+      systemFunctionsInfos:[],
+      receiptModel:[],
+      auditingProductsId:""
     }
   },
    computed:{
@@ -174,8 +166,6 @@ export default {
   //  获取医院数据
      var url = this.GLOBAL.hostIp;
       var _this = this;
-      // var hospitallist = this.hostipallist;
-      
         this.$http.post(url+"/HospitalSetting/Query",{"condition":""},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
@@ -189,6 +179,15 @@ export default {
              //  this.$router.push('/login')
              // };
               });
+         this.$http.post(url+'/Main/Menus',{},{emulateJSON: true,credentials:true}).then(response => {               
+                // get body data                                  
+                var _this = this;
+                var body = response.body;   
+                if (body.isSuccess) {  
+                this.isAdmin = body.data.loginInfo.isAdmin;
+                };
+                
+              })
     
 
   },
@@ -218,7 +217,7 @@ export default {
     displayContactInfo(id){
         var _this = this; 
         var url = this.GLOBAL.hostIp;
-              this.$http.post(url+"/HospitalSetting/GetContactInfo",{"id":id},{emulateJSON: true}).then(response => {               
+              this.$http.post(url+"/HospitalSetting/GetContactInfo",{"id":id},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                    
                 var data = response.body;        
                     _this.hospitalInfos.contactName.name = data.ContactPerson;
@@ -242,7 +241,7 @@ export default {
       if (searchmsg === "") {
         alert("请输入查询关键词")
       }else{
-        this.$http.post(url+"/HospitalSetting/Query",{"condition":searchmsg},{emulateJSON: true}).then(response => {
+        this.$http.post(url+"/HospitalSetting/Query",{"condition":searchmsg},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
@@ -255,7 +254,7 @@ export default {
     editHospital(id){
         var _this = this;
         var url = this.GLOBAL.hostIp;
-        this.$http.post(url+'/HospitalSetting/QueryHospitalById',{"id":id},{emulateJSON: true}).then(response => {
+        this.$http.post(url+'/HospitalSetting/QueryHospitalById',{"id":id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
                if (body.IsSuccess) {
                     _this.hospitalInfos.hospitalName.name = body.Name;
@@ -275,13 +274,13 @@ export default {
     },
     //申请产品，获取申请单位列表和产品列表 
     applypProduct(id){
-        var _this = this;
-
-        this.$http.get('./static/applyProduct.json',{params:{id:id}}).then(response => {
-            var data = response.body;
-              if (data.applystatus) {
-                _this.applyProduct = data.applyProduct;
-              };
+      var _this = this;
+      var url = this.GLOBAL.hostIp;
+       this.$http.post(url+"/HospitalSetting/HospitalProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
+            var body = response.body;
+            if (body.isSuccess) {
+              _this.applyProduct = body.data;
+            } else{};
               }, response => {
                 // error callback
               });
@@ -289,17 +288,21 @@ export default {
     
     //审核产品列表
     auditingProduct(id){
+        this.auditingProducts = [];
         var _this = this;
-        this.$http.get('./static/auditingProduct.json',{params:{id:id}}).then(response => {            
-              var data = response.body;
-              if (data.auditingStasus) {
-                _this.auditingProducts.auditingHostipals = data.auditingHostipals;
-              };
+        var url = this.GLOBAL.hostIp;
+        this.$http.post(url+"/HospitalSetting/AuditingProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
+            var body = response.body;
+            if (body.isSuccess) {
+              var data = body.data;
+              _this.auditingProducts =[];
+              _this.auditingProducts = data.vendors;
+              _this.auditingProductsId = data.hospitalId;
+            } else{};
               }, response => {
                 // error callback
-                console.log("error")
               });
-    },
+    },   
     //审核产品，获取对应供应商提供的产品
     applyList(){
         var val = $(event.currentTarget).val();
@@ -314,12 +317,40 @@ export default {
                 console.log("error")
               });
     },
+    //根据医院id获取票据信息
+    receipts(id){
+      var url = this.GLOBAL.hostIp;
+      var _this = this;
+        this.$http.post(url+"/HospitalSetting/Receipts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
+          var body = response.body;
+          if (body.isSuccess) {
+            var data = body.data;
+            _this.receiptModel = data.receipts;
+          };
+      })
+    },
+    relFunction(id){
+        var _this = this;        
+        var url = this.GLOBAL.hostIp; 
+              this.$http.post(url+"/SystemFunction/GetPrivilegesAdmin",{unitId:id},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data   
+                var body = response.body;
+                if (body.isSuccess) {
+                var   data = body.data.functions;                  
+                _this.systemFunctionsInfos = data; 
+                } else{};
+                console.log(data)   
+              }, response => {
+                // error callback
+              });
+    },
      goto:function(index){
           if(index == this.current) return;
             this.current = index;
            // 发送页面请求
         }
-  }
+    }
+  
 }
 </script>
 
@@ -347,17 +378,17 @@ export default {
   text-align: right;
   padding-right: 0;
  }
- #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo, #receipts{
+ #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo, #receipts, #systemFunctionsInfo{
   text-align: left;
  }
- #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row{
+ #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row #systemFunctionsInfo .form-inline>.row{
   margin-bottom: 5px;
   line-height: 30px;
  }
  .require-label{
   color: red;
  }
- #hospitalInfo .form-control,#hospitalProductsInfo .form-control, #formApproveList .form-control, #edithospitalInfo .form-control{
+ #hospitalInfo .form-control,#hospitalProductsInfo .form-control, #formApproveList .form-control, #edithospitalInfo .form-control, #systemFunctionsInfo .form-control{
   width: 100%;
  }
  #contactInfo .form-control-static{
@@ -365,5 +396,24 @@ export default {
  }
  input.form-control.haserror{
     border: 1px solid #DC143C;
+ }
+  #systemFunctionsInfo span{
+  color: #000;
+ }
+ #systemFunctionsInfo .name{
+    width: 30%;
+    display: inline-block;
+ }
+ #systemFunctionsInfo .operation{
+  display:inline-block;
+ }
+ #systemFunctionsInfo #systemFunctions .item{
+  border-bottom: 1px solid #eeeeee;
+ }
+ #systemFunctions .titles span{
+  display: inline-block;
+ }
+ #systemFunctions .titles span.fun-name{
+  width: 31%;
  }
 </style>

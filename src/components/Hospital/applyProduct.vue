@@ -18,7 +18,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control" required="" id="units" v-model="applyModel.partment.value" v-bind:class="{haserror:(applyModel.partment.iserror)}">
                                         <option value="">请选择申请单位</option>
-                                        <option v-for="item in $parent.$data.applyProduct.applyHospitals" v-bind:value="item.hostipalValue" v-text="item.hostipalName"></option>
+                                        <option v-for="item in $parent.$data.applyProduct.units" v-bind:value="item.id" v-text="item.name"></option>
                                     </select>
                                 </div>
                                 <div class="col-sm-2">
@@ -28,7 +28,7 @@
                                 <div class="col-sm-4">
                                     <select class="form-control" required="" id="products" v-on:change="applyProductBind" v-model="applyModel.product.value" v-bind:class="{haserror:(applyModel.product.iserror)}">
                                         <option value="">请选择产品</option>
-                                        <option v-for="product in $parent.$data.applyProduct.applyProducts" v-bind:value="product.productValue" v-text="product.productName"></option>
+                                        <option v-for="product in $parent.$data.applyProduct.products" v-bind:value="product.id" v-text="product.name"></option>
                                     </select>
                                 </div>
                             </div>
@@ -44,12 +44,12 @@
                                     <label class="control-label">别名</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" id="alias" class="form-control" placeholder="别名" maxlength="50" v-model="$parent.$data.applyProductInfo.otherName"></div>
+                                    <input type="text" id="alias" class="form-control" placeholder="别名" maxlength="50" v-model="applyProductInfo.otherName"></div>
                                 <div class="col-sm-2">
                                     <label class="control-label">分类</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" id="category" class="form-control" placeholder="分类" maxlength="30" required="" v-model="$parent.$data.applyProductInfo.className"></div>
+                                    <input type="text" id="category" class="form-control" placeholder="分类" maxlength="30" required="" v-model="applyProductInfo.className"></div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
@@ -168,21 +168,32 @@ export default {
                 value:"",
                 iserror:false
             }
-        }
+        },
+        applyProductInfo:{
+            inUse:true,
+            otherName:"",
+            className:""
+          },
     }
   },
   methods:{
         //根据产品选择获取产品绑定信息
     applyProductBind(){
-        var _this = this.$parent.$data;
+        var _this = this;
+        var url = this.GLOBAL.hostIp;
         var val = $(event.currentTarget).val();
-        this.$http.get('./static/applyProductInfo.json',{params:{val:val}}).then(response => {
+        var data = {
+            unitId:_this.applyModel.partment.value,
+            productId:_this.applyModel.product.value
+        }
+        this.$http.post(url+"/HospitalSetting/GetHospitalProduct",data,{emulateJSON: true,credentials: true}).then(response => {
 
-            var data = response.body;
-            if (data.applystatus) {
-                _this.applyProductInfo.otherName = data.otherName;
-                _this.applyProductInfo.className = data.class
-            };
+            var body = response.body;
+            console.log(body)
+          //  if (data.applystatus) {
+          //      _this.applyProductInfo.otherName = data.otherName;
+          //      _this.applyProductInfo.className = data.class
+          //  };
               
               }, response => {
                 // error callback

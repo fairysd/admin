@@ -16,7 +16,7 @@
                             <div class="col-sm-10">
                                 <select class="form-control" id="vendors" v-on:change="applyList">
                                     <option value="">请选择...</option>
-                                    <option v-for="item in this.$parent.$data.auditingProducts.auditingHostipals" v-bind:value="item.hostipalValue" v-text="item.hostipalName" ></option>
+                                    <option v-for="item in this.$parent.$data.auditingProducts" v-bind:value="item.id" v-text="item.name" ></option>
                                 </select>
                             </div>
                         </div>
@@ -28,10 +28,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in this.$parent.$data.auditingProducts.auditingProducts">
-                                    <td v-text="item.productName"></td>
+                                <tr v-for="item in productList">
+                                    <td v-text="item.name"></td>
                                     <td>
-                                        <input type="checkbox" @click="clickSubmit(item.productValue)"></td>
+                                        <input v-if="item.isAudit"  type="checkbox" checked @click="clickSubmit(item.productId,item.vendorId,item.isAudit,item.version)" >
+                                        <input v-else  type="checkbox"  @click="clickSubmit(item.productId,item.vendorId,item.isAudit,item.version)" >
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -47,33 +49,65 @@
 <script>
 export default {
   name: 'auditingProduct',
+  
   data () {
     return {     
-        
+        auditingModel:{
+            hospitalId:"",
+            vendorId:""
+        },
+        productList:[],
+        auditingProductModel:{
+            HospitalId:"",
+            productId:"",
+            vendorId:"",
+            isAudit:""
+        }
     }
   },
   methods:{
     applyList(){
+        this.productList=[];
         var val = $(event.currentTarget).val();
-        var _this = this.$parent.$data;
-        this.$http.get('./static/auditingProduct.json',{params:{val:val}}).then(response => {            
-              var data = response.body;
-              if (data.auditingStasus) {
-                _this.auditingProducts.auditingProducts = data.auditingProducts;
-              };
+        var _this = this;
+        var url = this.GLOBAL.hostIp;
+        this.auditingModel.hospitalId = this.$parent.$data.auditingProductsId;
+        this.auditingModel.vendorId = val;
+        var data = this.auditingModel;
+        this.$http.post(url+"/HospitalSetting/GetAuditingProducts",data,{emulateJSON: true,credentials: true}).then(response => {            
+              var body = response.body;
+                if (body.isSuccess) {
+                    data = body.data;
+                    _this.productList =  data;
+                } else{};
               }, response => {
                 // error callback
                 console.log("error")
               });
     },
-    clickSubmit(val){
-        // 发送http请求，发送产品的value值确认
-          this.$http.get('./static/asd.json',{params:{val:val}}).then(response => {            
-              
-              }, response => {
-                // error callback
-                console.log("error")
-              });
+    clickSubmit(productId,vendorId,isAudit,version){
+        var _this = this;
+        var url = this.GLOBAL.hostIp;
+        var data = {
+            HospitalId:_this.auditingModel.hospitalId,
+            productId:productId,
+            vendorId:vendorId,
+            isAudit:!isAudit,
+            version:version+1
+        }
+         this.$http.post(url+"/HospitalSetting/SaveAuditingProduct",data,{emulateJSON: true,credentials: true}).then(response => {          
+                var data = this.auditingModel;
+                this.$http.post(url+"/HospitalSetting/GetAuditingProducts",data,{emulateJSON: true,credentials: true}).then(response => {            
+                      var body = response.body;
+                        if (body.isSuccess) {
+                            data = body.data;
+                            _this.productList =  data;
+                        } else{};
+                      })
+             }, response => {
+               // error callback
+               console.log("error")
+             });
     }
   }
 }

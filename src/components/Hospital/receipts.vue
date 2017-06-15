@@ -19,7 +19,7 @@
                             </thead>
                             <tbody><tr class="receipt-item edit" v-for="item in this.$parent.$data.receiptModel">
         <td><span v-text="item.title" @click="editInfo" v-show="display"></span><input type="text" class="form-control" v-model="item.title" v-show="edit"></td>
-        <td><span v-text="item.interest" @click="editInfo" v-show="display"></span><input type="text" class="form-control" v-model="item.interest" v-show="edit"></td>
+        <td><span v-text="item.tax" @click="editInfo" v-show="display"></span><input type="text" class="form-control" v-model="item.tax" v-show="edit"></td>
         <td><button href="#" id="btnUpdate" class="btn btn-primary save" v-show="save" @click="saveInfo">保存</button></td> 
     </tr></tbody>
                             <tfoot>
