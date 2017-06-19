@@ -1,6 +1,7 @@
 <template>
       <div class="modal fade" id="hospitalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;">
             <div class="modal-dialog modal-lg" role="document">
+            <validation name="validation1">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -8,6 +9,7 @@
                         </button>
                         <h4 class="modal-title" id="exampleModalLabel">院方</h4>
                     </div>
+                    
                     <div class="modal-body forms">
                         <div class="form-inline">
                             <div class="row">
@@ -16,7 +18,8 @@
                                     <span class="require-label">*</span>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input v-model="hospitalInfos.hospitalName.name" type="text" id="name" class="form-control" v-bind:class="{haserror:(hospitalInfos.hospitalName.iserror)}" placeholder="名称" maxlength="50"></div>
+                                    <input v-validate:username="['required']" type="text" id="username" class="form-control"  >
+                                    <!-- <input v-model="hospitalInfos.hospitalName.name" type="text" id="name" class="form-control" v-bind:class="{haserror:(hospitalInfos.hospitalName.iserror)}" placeholder="名称" maxlength="50" v-validate:username="['required']">--></div> 
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
@@ -72,11 +75,14 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <label id="error" class="label-danger" v-bind:class="{hidden:!(this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror)}">请输入红框标出的是必填项！</label>
-                        <button @click="addhospital()" type="button" id="btnConfirm" class="btn btn-primary" v-bind:class="{disabled:(this.hospitalInfos.hospitalName.iserror&&this.hospitalInfos.contactName.iserror)}">确认</button>
+                        <!-- <p v-if="$validation1.username.required">有必填项未填写!</p> -->
+                        <!-- <label id="error" class="label-danger" v-bind:class="{hidden:!(this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror)}">请输入红框标出的是必填项！</label> -->
+                        <!-- <button @click="addhospital()" type="button" id="btnConfirm" class="btn btn-primary" v-bind:class="{disabled:(this.hospitalInfos.hospitalName.iserror&&this.hospitalInfos.contactName.iserror)}" v-if="$validation.valid">确认</button> -->
+                        <button  v-if="$validation1.valid">确认</button>
                         <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    </div>
+                    </div>                    
                 </div>
+                </validation>
             </div>
         </div>
 
@@ -104,6 +110,9 @@ export default {
           contactMethod2:'',
           contactMethod3:'',
           contactMethod4:''
+      },
+      validation1:{
+        result:{}
       }
     }
   },

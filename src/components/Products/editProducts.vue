@@ -67,6 +67,21 @@
                             <input type="text" id="packageUnit" class="form-control" placeholder="标准包装单位" maxlength="10" v-model="$parent.$data.productModel.standardUnit">
                         </div>
                     </div>
+                     <div class="row">
+                        <div class="col-sm-2">
+                            <label class="control-label">注册证号</label>
+                            <span class="require-label">*</span>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="registerNumber" class="form-control" required="" placeholder="注册证号" maxlength="10" v-model="$parent.$data.productModel.registerNumber" >
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">有效日期</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="validDate" class="form-control" placeholder="有效日期" maxlength="10" v-model="$parent.$data.productModel.validDate">
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-sm-2">
                             <label class="control-label">分类</label>

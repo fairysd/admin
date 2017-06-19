@@ -101,6 +101,8 @@ export default {
           iserror:false
         },
         standardUnit:"",
+        registerNumber:"",
+        validDate:"",
         class:"",
         domestic:true
       }      

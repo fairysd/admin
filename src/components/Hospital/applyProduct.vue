@@ -44,12 +44,12 @@
                                     <label class="control-label">别名</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" id="alias" class="form-control" placeholder="别名" maxlength="50" v-model="applyProductInfo.otherName"></div>
+                                    <input type="text" id="alias" class="form-control" placeholder="别名" maxlength="50" v-model="applyModel.otherName"></div>
                                 <div class="col-sm-2">
                                     <label class="control-label">分类</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <input type="text" id="category" class="form-control" placeholder="分类" maxlength="30" required="" v-model="applyProductInfo.className"></div>
+                                    <input type="text" id="category" class="form-control" placeholder="分类" maxlength="30" required="" v-model="applyModel.className"></div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
@@ -181,26 +181,21 @@ export default {
     applyProductBind(){
         var _this = this;
         var url = this.GLOBAL.hostIp;
-        var val = $(event.currentTarget).val();
-        var data = {
-            unitId:_this.applyModel.partment.value,
-            productId:_this.applyModel.product.value
-        }
-        this.$http.post(url+"/HospitalSetting/GetHospitalProduct",data,{emulateJSON: true,credentials: true}).then(response => {
-
+        var val = $(event.currentTarget).val();      
+        this.$http.post(url+"/Product/Edit",{"id":val},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
-            console.log(body)
-          //  if (data.applystatus) {
-          //      _this.applyProductInfo.otherName = data.otherName;
-          //      _this.applyProductInfo.className = data.class
-          //  };
-              
+               if (body.isSuccess) {
+                var data = body.data;
+                   _this.applyModel.otherName = data.fullName;
+                   _this.applyModel.className = data.category;
+               };                
               }, response => {
                 // error callback
               });
     },
     submitApply(){        
         //验证必填框是否填写      
+        var _this = this;
        if (this.applyModel.partment.value =="") {
                 this.applyModel.partment.iserror = true;
         }else{
@@ -219,10 +214,31 @@ export default {
     var isclick = this.applyModel.partment.iserror||this.applyModel.price.iserror||this.applyModel.product.iserror;
       if(!isclick){
          //
-         var data = this.applyModel;
+         var data = {
+            HospitalId:"",
+            UnitId:"",
+            ProductId:"",
+            Category:"",
+            Alias:"",
+            NeedCheck:"",
+            NeedSplit:"",
+            SplitCopies:"",
+            SplitUnit:"",
+            SplitCapacity:"",
+            MiniSplitNumber:"",
+            GrantUnitCount:"",
+            OrderUnitCount:"",
+            DonateCount:"",
+            DonateBase:"",
+            ValidDays:"",
+            ArrivalDays:"",
+            Price:"",
+            PackagePrice:"",
+            IsActive:""
+         }         
          // 发送http请求
-         this.$http.post('./static/applyProductInfo.json',data).then(response => {
-            
+         this.$http.post(url+"/Product/SaveHospitalProduct",data,{emulateJSON: true,credentials: true}).then(response => {
+                
               }, response => {
                 // error callback
               });

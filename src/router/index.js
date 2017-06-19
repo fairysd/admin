@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
+import VueValidator from 'vue-validator'
 import Hello from '@/components/Hello'
 import container from '@/components/content'
 import login from '@/components/login'
@@ -9,11 +11,8 @@ import vendors from '@/components/Vendors/Vendors'
 import vendorUnits from '@/components/VendorUnits/vendorUnits'
 import products from '@/components/Products/products'
 import user from '@/components/User/user'
-
+Vue.use(VueValidator)
 Vue.use(Router);
-
-
-
 export default new Router({
   routes: [
     {
