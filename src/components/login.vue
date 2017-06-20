@@ -53,10 +53,10 @@ export default {
         Account:this.account,
         Password:this.password
       }
-       this.$http.post(url+"/Logon/Validate",data,{emulateJSON: true}).then(response => {
+       this.$http.post(url+"/Logon/Validate",data,{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.IsSuccess) {
-            this.$router.push('/container')
+            this.$router.push('/Setting')
           };      
       })
     }

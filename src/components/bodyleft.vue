@@ -22,7 +22,7 @@ export default {
    mounted:function(){
     //根据登陆角色，获取该角色操作权限
     var url = this.GLOBAL.hostIp;
-      this.$http.post(url+'/Main/Menus',{},{emulateJSON: true,credentials:true}).then(response => {               
+      this.$http.post(url+'/Main/JsonMenus',{},{emulateJSON: true,credentials:true}).then(response => {               
                 // get body data                                  
                 var _this = this;
                 var body = response.body;   

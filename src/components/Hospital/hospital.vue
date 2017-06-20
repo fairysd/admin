@@ -46,10 +46,7 @@
                                         <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.id)">审核产品</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList">审核列表</a>
-                                    </li>
-                                    <li v-if="isAdmin">
-                                        <a href="#" data-target="#systemFunctionsInfo" data-toggle="modal" class="systemFunctions" @click="relFunction(item.id)">关联功能</a>
+                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList" @click="approveList(item.id)">审核列表</a>
                                     </li>
                                 </ul>
                             </div>
@@ -87,8 +84,8 @@
         <!-- 产品审核modal end-->
         <!-- 审核列表modal start-->
         <approveList></approveList>        
-        <!-- 审核列表modal end-->
-        <relativeHospital></relativeHospital>
+        <!-- 审核列表modal end
+        <relativeHospital></relativeHospital>-->
   </div>
 </template>
 <script>
@@ -137,7 +134,8 @@ export default {
       },
       systemFunctionsInfos:[],
       receiptModel:[],
-      auditingProductsId:""
+      auditingProductsId:"",
+      applyProductHospitalId:""
     }
   },
    computed:{
@@ -166,7 +164,7 @@ export default {
   //  获取医院数据
      var url = this.GLOBAL.hostIp;
       var _this = this;
-        this.$http.post(url+"/HospitalSetting/Query",{"condition":""},{emulateJSON: true,credentials: true}).then(response => {
+        this.$http.post(url+"/HospitalSetting/JsonQuery",{"condition":""},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
@@ -179,7 +177,7 @@ export default {
              //  this.$router.push('/login')
              // };
               });
-         this.$http.post(url+'/Main/Menus',{},{emulateJSON: true,credentials:true}).then(response => {               
+         this.$http.post(url+'/Main/JsonMenus',{},{emulateJSON: true,credentials:true}).then(response => {               
                 // get body data                                  
                 var _this = this;
                 var body = response.body;   
@@ -276,10 +274,11 @@ export default {
     applypProduct(id){
       var _this = this;
       var url = this.GLOBAL.hostIp;
-       this.$http.post(url+"/HospitalSetting/HospitalProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
+       this.$http.post(url+"/HospitalSetting/JsonHospitalProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
             if (body.isSuccess) {
               _this.applyProduct = body.data;
+              _this.auditingProductsId = data.hospitalId;
             } else{};
               }, response => {
                 // error callback
@@ -291,7 +290,7 @@ export default {
         this.auditingProducts = [];
         var _this = this;
         var url = this.GLOBAL.hostIp;
-        this.$http.post(url+"/HospitalSetting/AuditingProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
+        this.$http.post(url+"/HospitalSetting/JsonAuditingProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
             if (body.isSuccess) {
               var data = body.data;
@@ -304,14 +303,12 @@ export default {
               });
     },   
     //审核产品，获取对应供应商提供的产品
-    applyList(){
-        var val = $(event.currentTarget).val();
+    approveList(id){
         var _this = this;
-        this.$http.get('./static/auditingProduct.json',{params:{val:val}}).then(response => {            
-              var data = response.body;
-              if (data.auditingStasus) {
-                _this.auditingProducts.auditingProducts = data.auditingProducts;
-              };
+        var url = this.GLOBAL.hostIp;
+        this.$http.post(url+"/HospitalSetting/JsonFormApproveList",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {            
+              var body = response.body;
+              
               }, response => {
                 // error callback
                 console.log("error")

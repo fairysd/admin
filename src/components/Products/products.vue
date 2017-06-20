@@ -89,6 +89,8 @@ export default {
           iserror:false
         },
         wholeName:"",
+        registerNumber:"",
+        validDate:"",
         abbr:"",
         brand:"",
         miniPackageSpec:"",
@@ -101,8 +103,6 @@ export default {
           iserror:false
         },
         standardUnit:"",
-        registerNumber:"",
-        validDate:"",
         class:"",
         domestic:true
       }      
@@ -157,6 +157,8 @@ export default {
           iserror:false
         },
         wholeName:"",
+        registerNumber:"",
+        validDate:"",
         abbr:"",
         brand:"",
         miniPackageSpec:"",
@@ -180,7 +182,7 @@ export default {
         var _this = this;
         var id = id;
         var url = this.GLOBAL.hostIp;
-        this.$http.post(url+"/Product/Edit",{"id":id},{emulateJSON: true}).then(response => {
+        this.$http.post(url+"/Product/JsonEdit",{"id":id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
                if (body.isSuccess) {
                 var data = body.data;
@@ -194,6 +196,8 @@ export default {
                     _this.productModel.standardUnit = data.packageUnit;
                     _this.productModel.class = data.category;
                     _this.productModel.domestic =  data.isLocal;
+                    _this.productModel.registerNumber =  data.registerNumber;
+                    _this.productModel.validDate =  data.validDate;
                };                
               }, response => {
                 // error callback

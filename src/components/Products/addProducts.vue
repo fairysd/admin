@@ -25,6 +25,21 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-2">
+                            <label class="control-label">注册证号</label>
+                            <span class="require-label">*</span>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="name" class="form-control" required="" placeholder="注册证号" maxlength="50" v-model="$parent.$data.productModel.registerNumber" v-bind:class="{haserror:($parent.$data.productModel.name.iserror)}">
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">有效日期</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="fullName" class="form-control" placeholder="有效日期" maxlength="100" v-model="$parent.$data.productModel.validDate">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
                             <label class="control-label">缩写代码</label>
                         </div>
                         <div class="col-sm-4">
@@ -140,6 +155,8 @@ export default {
             id:0,
             Name:this.$parent.$data.productModel.name.value,
             FullName:this.$parent.$data.productModel.wholeName,
+            registerNumber:this.$parent.$data.productModel.registerNumber,
+            validDate:this.$parent.$data.productModel.validDate,
             ShortCode:this.$parent.$data.productModel.abbr,
             Brand:this.$parent.$data.productModel.brand,
             MiniPackageSpec:this.$parent.$data.productModel.miniPackageSpec,
@@ -150,9 +167,7 @@ export default {
             IsLocal:this.$parent.$data.productModel.domestic
       };
        this.$http.post(url+"/Product/Save",data,{emulateJSON: true}).then(response => {               
-                // get body data                    
-              alert("添加成功")
-                              
+                // get body data                               
               }, response => {
                 // error callback
               });

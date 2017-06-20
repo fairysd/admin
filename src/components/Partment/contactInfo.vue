@@ -13,7 +13,7 @@
                             <label class="control-label">联系人</label>
                         </div>
                         <div class="col-sm-4">
-                            <p class="form-control-static" v-text="$parent.$data.contactInfo.name"></p>
+                            <p class="form-control-static" v-text="$parent.$data.contactInfo.contactPerson"></p>
                         </div>
                     </div>
                     <div class="row">
@@ -29,13 +29,13 @@
                             <label class="control-label">联系方式1</label>
                         </div>
                         <div class="col-sm-4">
-                            <p class="form-control-static" v-text="$parent.$data.contactInfo.type1"></p>
+                            <p class="form-control-static" v-text="$parent.$data.contactInfo.contactWay1"></p>
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">联系方式2</label>
                         </div>
                         <div class="col-sm-4">
-                            <p class="form-control-static" v-text="$parent.$data.contactInfo.type2"></p>
+                            <p class="form-control-static" v-text="$parent.$data.contactInfo.contactWay2"></p>
                         </div>
                     </div>
                     <div class="row">
@@ -43,13 +43,13 @@
                             <label class="control-label">联系方式3</label>
                         </div>
                         <div class="col-sm-4">
-                            <p class="form-control-static" v-text="$parent.$data.contactInfo.type3"></p>
+                            <p class="form-control-static" v-text="$parent.$data.contactInfo.contactWay3"></p>
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">联系方式4</label>
                         </div>
                         <div class="col-sm-4">
-                            <p class="form-control-static" v-text="$parent.$data.contactInfo.type4"></p>
+                            <p class="form-control-static" v-text="$parent.$data.contactInfo.contactWay4"></p>
                         </div>
                     </div>
                 </div>

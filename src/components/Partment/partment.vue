@@ -118,9 +118,8 @@ export default {
       hospitals:[],
       partmentlist:[],
       systemFunctionsInfos:[],
-      contactInfo:{
-        
-      }
+      contactInfo:{},
+      relUnitId:""
     }
   },
    computed:{
@@ -149,7 +148,7 @@ export default {
     //获取可选医院列表
       var url = this.GLOBAL.hostIp;
       var _this = this; 
-      this.$http.post(url+'/HospitalSetting/UnitList',{},{emulateJSON: true,credentials: true}).then(response => {               
+      this.$http.post(url+'/HospitalSetting/JsonUnitList',{},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                
                 var body = response.body;
                 if (body.isSuccess) {                  
@@ -242,15 +241,14 @@ $("#hospitalUnitInfo").modal("toggle")
     },
     //查看部门联系信息
      displayContactInfo(id){
-        var _this = this;         
-              this.$http.get('./static/contactInfo.json',{params:{id:id}}).then(response => {               
-                // get body data    
-                var data = response.body;
-                if (data.infostatus) {
-                    console.log(id)
-                   var  infobody = data.infobody;
-                    _this.contactInfo = infobody;
-                };
+        var _this = this;
+        var url = this.GLOBAL.hostIp;      
+              this.$http.post(url+'/VendorSetting/UnitQueryById',{id:id},{emulateJSON: true,credentials: true}).then(response => {
+            var body = response.body;
+               if (body.isSuccess) {
+                    var data = body.data;
+                    _this.contactInfo = data.contactInfo;
+               };                
               }, response => {
                 // error callback
               });
@@ -258,11 +256,16 @@ $("#hospitalUnitInfo").modal("toggle")
     },
     //关联功能
     relFunction(id){
-        var _this = this;         
-              this.$http.get('./static/partmentFunctionInfo.json',{params:{id:id}}).then(response => {               
+        var _this = this;        
+        var url = this.GLOBAL.hostIp; 
+              this.$http.post(url+"/SystemFunction/GetPrivilegesAdmin",{unitId:id},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data   
-                var data = response.body;
-                _this.systemFunctionsInfos = data;    
+                var body = response.body;
+                if (body.isSuccess) {
+                var   data = body.data.functions;
+                _this.relUnitId = body.data.unitId;                  
+                _this.systemFunctionsInfos = data; 
+                } else{};
               }, response => {
                 // error callback
               });

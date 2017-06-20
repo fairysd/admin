@@ -181,13 +181,15 @@ export default {
     applyProductBind(){
         var _this = this;
         var url = this.GLOBAL.hostIp;
-        var val = $(event.currentTarget).val();      
-        this.$http.post(url+"/Product/Edit",{"id":val},{emulateJSON: true,credentials: true}).then(response => {
+        var val = $(event.currentTarget).val();     
+        var UnitId =  _this.applyModel.partment.value
+        this.$http.post(url+"/HospitalSetting/JsonGetHospitalProduct",{"unitId":UnitId,"productId":val},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
                if (body.isSuccess) {
                 var data = body.data;
                    _this.applyModel.otherName = data.fullName;
                    _this.applyModel.className = data.category;
+                   _this.applyModel.use = data.isUsing;
                };                
               }, response => {
                 // error callback
@@ -196,6 +198,7 @@ export default {
     submitApply(){        
         //验证必填框是否填写      
         var _this = this;
+        var url = this.GLOBAL.hostIp;
        if (this.applyModel.partment.value =="") {
                 this.applyModel.partment.iserror = true;
         }else{
@@ -209,35 +212,35 @@ export default {
         if (this.applyModel.price.name =="") {
                 this.applyModel.price.iserror = true;
         }else{
-            this.applyModel.price.iserror = false;
+            this.applyModel.price.iserror = false;   
         };
     var isclick = this.applyModel.partment.iserror||this.applyModel.price.iserror||this.applyModel.product.iserror;
       if(!isclick){
          //
          var data = {
-            HospitalId:"",
-            UnitId:"",
-            ProductId:"",
-            Category:"",
-            Alias:"",
-            NeedCheck:"",
-            NeedSplit:"",
-            SplitCopies:"",
-            SplitUnit:"",
-            SplitCapacity:"",
-            MiniSplitNumber:"",
-            GrantUnitCount:"",
-            OrderUnitCount:"",
-            DonateCount:"",
-            DonateBase:"",
-            ValidDays:"",
-            ArrivalDays:"",
-            Price:"",
+            HospitalId:_this.$parent.$data.applyProductHospitalId,
+            UnitId: _this.applyModel.partment.value,
+            ProductId:_this.applyModel.product.value,
+            Category:_this.applyModel.className,
+            Alias:_this.applyModel.otherName,
+            NeedCheck:_this.applyModel.needCheck,
+            NeedSplit:_this.applyModel.needSplit,
+            SplitCopies:_this.applyModel.splitCopies,
+            SplitUnit:_this.applyModel.splitUnit,
+            SplitCapacity:_this.applyModel.splitCapacity,
+            MiniSplitNumber:_this.applyModel.miniSplitNumber,
+        //    GrantUnitCount:_this.applyModel.,
+         //   OrderUnitCount:_this.applyModel.,
+            DonateCount:_this.applyModel.donateCount,
+            DonateBase:_this.applyModel.donateBase,
+            ValidDays:_this.applyModel.validDays,
+            ArrivalDays:_this.applyModel.arrivalDays,
+            Price:_this.applyModel.price.value,
             PackagePrice:"",
-            IsActive:""
+            IsActive:true
          }         
          // 发送http请求
-         this.$http.post(url+"/Product/SaveHospitalProduct",data,{emulateJSON: true,credentials: true}).then(response => {
+         this.$http.post(url+"/HospitalSetting/SaveHospitalProduct",data,{emulateJSON: true,credentials: true}).then(response => {
                 
               }, response => {
                 // error callback

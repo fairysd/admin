@@ -6,16 +6,16 @@
 <div class="form-inline">
     <div class="form-group">
         <label for="formNo">院方/供应商</label>
-        <select id="roots" class="form-control" v-on:change="applyunit">
+        <select id="roots" class="form-control" v-on:change="applyunit" v-model="queryModel.rootId">
         <optgroup label="院方"><option v-for="item in hospital" v-text="item.name" v-bind:value="item.id"></option></optgroup><optgroup label="供应商"><option v-for="item in vendor" v-text="item.name" v-bind:value="item.id">1111</option></optgroup></select>
     </div>
     <div class="form-group">
         <label for="formNo">单位</label>
-        <select id="units" class="form-control"><option value="">请选择...</option><option v-for="item in units" v-bind:value="item.value" v-text="item.name"></option></select>
+        <select id="units" class="form-control" v-model="queryModel.unitId"><option value="">请选择...</option><option v-for="item in units" v-bind:value="item.id" v-text="item.name"></option></select>
     </div>
     <div class="form-group style_user">
         <label for="formNo" class="sr-only">用户</label>
-        <input type="text" id="condition" class="form-control" placeholder="用户">
+        <input type="text" id="condition" class="form-control" placeholder="用户" v-model="queryModel.condition">
     </div>
     <button class="btn btn-primary pull-right" id="btnQuery" @click="serachUser">查询</button>
     <br style="clear:both;">
@@ -37,8 +37,9 @@
         <td v-text="item.name"></td>
         <td  v-text="item.account"></td>
         <td  v-text="item.hospital"></td>
-        <td  v-text="item.partment"></td>
-        <td  v-text="item.space"></td>
+        <td  v-text="item.unitName"></td>
+        <td  v-if="item.title">主管</td>
+        <td  v-else>员工</td>
         <td>
             <div class="btn-group">
                 <a href="#" class="btn btn-primary edit" @click="editUser(item.id)" data-target="#editUserInfo" data-toggle="modal">编辑</a>
@@ -109,7 +110,12 @@ export default {
     addUserHospital:[],
     addUserVender:[],
     addUserUnit:[],
-    editUserUnit:[]
+    editUserUnit:[],
+    queryModel:{
+        rootId:"",
+        unitId:"",
+        condition:""
+    },
     }
   },
   computed:{
@@ -136,41 +142,42 @@ export default {
       },
   mounted:function(){
     //获取用户数据
-      this.$http.get('./static/user.json').then(response => {               
-                // get body data                                  
-                var _this = this;               
-                var data = response.body;
-                _this.hospital = data.hospital;
-                _this.vendor = data.vendor;   
+        var _this = this;
+        var url = this.GLOBAL.hostIp;
+       this.$http.post(url+"/User/JsonIndex",{},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data    
+                var body = response.body;                              
+                if (body.isSuccess) {
+                  var  data = body.data;
+                    _this.hospital = data.hospital;
+                    _this.vendor = data.vendor;
+                } else{};
+                
               }, response => {
                 // error callback
-              });     
-       this.$http.get('./static/userInfo.json').then(response => {               
-                // get body data                                  
-                var _this = this;               
-                var data = response.body;
-                var page = data.infopage;     
-                this.userInfo = data.userInfo;
-                this.allpage = page.allpage;
-                this.current = page.current;
-                this.showItem = page.showItem;
-              }, response => {
-                // error callback
-              });  
+              });    
+  
   },
   methods:{      
     serachUser(){      
-      console.log(this.GLOBAL.hostIp)
-      var searchmsg = this.searchmsg;
-      if (searchmsg === "") {
-        alert("请输入查询关键词")
-      }else{
-        this.$http.get('./static/user.json',{params:{keywords:searchmsg}}).then(response => {
-        var data = response.body;
-        this.hospitalList = data.infobody;
-
-      });
-      }    
+        var _this = this;
+        var url = this.GLOBAL.hostIp;
+        var data =  _this.queryModel
+         this.$http.post(url+"/User/JsonQuery",data,{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data    
+                var body = response.body;                              
+                if (body.isSuccess) {
+                  var  data = body.data;
+                  
+                  _this.userInfo = data;
+                    //_this.hospital = data.hospital;
+                    //_this.vendor = data.vendor;
+                } else{};
+                
+              }, response => {
+                // error callback
+              });
+        
     },
     goto:function(index){
           if(index == this.current) return;
@@ -203,9 +210,18 @@ export default {
     },
     applyunit(){
     var val = $(event.currentTarget).val();
-    this.$http.get('./static/addUser.json',{params:{val:val}}).then(response => {
-            var data = response.body;
-            this.units = data.unit;              
+     var _this = this;
+    var url = this.GLOBAL.hostIp;
+       this.$http.post(url+"/Unit/GetUnits",{parentId:val},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data    
+                var body = response.body;                              
+                if (body.isSuccess) {
+                  var  data = body.data;
+                  _this.units = data;
+                    //_this.hospital = data.hospital;
+                    //_this.vendor = data.vendor;
+                } else{};
+                
               }, response => {
                 // error callback
               });

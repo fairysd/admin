@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 import VueValidator from 'vue-validator'
 import Hello from '@/components/Hello'
 import container from '@/components/content'
@@ -11,6 +10,7 @@ import vendors from '@/components/Vendors/Vendors'
 import vendorUnits from '@/components/VendorUnits/vendorUnits'
 import products from '@/components/Products/products'
 import user from '@/components/User/user'
+
 Vue.use(VueValidator)
 Vue.use(Router);
 export default new Router({
@@ -20,7 +20,7 @@ export default new Router({
       component: login,  
     },
     {
-      path: '/container',
+      path: '/Setting',
       component: container,
       children:[
         {
@@ -28,27 +28,27 @@ export default new Router({
           component:Hello
         },
         {
-          path: '/container/hospital',
+          path: '/Setting/HospitalSetting/List',
           component: hospital
         },
         {
-          path: '/container/partment',
+          path: '/Setting/HospitalSetting/UnitList',
           component: partment
         },
         {
-          path: '/container/products',
-          component: products
-        },
-        {
-          path: '/container/vendors',
-          component: vendors
-        },
-        {
-          path: '/container/vendorUnits',
+          path: '/Setting/VendorSetting/Vendors',
           component: vendorUnits
         },
         {
-          path: '/container/user',
+          path: '/Setting/VendorSetting/VendorUnits',
+          component: vendors
+        },
+        {
+          path: '/Setting/Product/Index',
+          component: products
+        },
+        {
+          path: '/Setting/User/Index',
           component: user
         }
 

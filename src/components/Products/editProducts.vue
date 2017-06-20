@@ -23,6 +23,21 @@
                             <input type="text" id="fullName" class="form-control" placeholder="全称" maxlength="100" v-model="$parent.$data.productModel.wholeName">
                         </div>
                     </div>
+                     <div class="row">
+                        <div class="col-sm-2">
+                            <label class="control-label">注册证号</label>
+                            <span class="require-label">*</span>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="name" class="form-control" required="" placeholder="注册证号" maxlength="50" v-model="$parent.$data.productModel.registerNumber" v-bind:class="{haserror:($parent.$data.productModel.name.iserror)}">
+                        </div>
+                        <div class="col-sm-2">
+                            <label class="control-label">有效日期</label>
+                        </div>
+                        <div class="col-sm-4">
+                            <input type="text" id="fullName" class="form-control" placeholder="有效日期" maxlength="100" v-model="$parent.$data.productModel.validDate">
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-sm-2">
                             <label class="control-label">缩写代码</label>
