@@ -16,7 +16,7 @@
                                     <span class="require-label">*</span>
                                 </div>
                                 <div class="col-sm-10">
-                                    <input v-model="$parent.$data.hospitalInfos.hospitalName.name" type="text" id="name" class="form-control" v-bind:class="{haserror:($parent.$data.hospitalInfos.hospitalName.iserror)}" placeholder="名称" maxlength="50"></div>
+                                    <input v-validate="'required'" v-model="$parent.$data.hospitalInfos.hospitalName.name" name="username" type="text" id="name" class="form-control" v-bind:class="{'input': true, 'haserror': errors.has('username') }" placeholder="名称" maxlength="50"></div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
@@ -36,7 +36,7 @@
                                     <span class="require-label">*</span>
                                 </div>
                                 <div class="col-sm-4">
-                                    <input v-model="$parent.$data.hospitalInfos.contactName.name" type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-bind:class="{haserror:($parent.$data.hospitalInfos.contactName.iserror)}"></div>
+                                    <input v-validate="'required'" v-model="$parent.$data.hospitalInfos.contactName.name" name="contactPerson" type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-bind:class="{'input': true, 'haserror': errors.has('contactPerson') }"></div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-2">
@@ -72,8 +72,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <label id="error" class="label-danger" v-bind:class="{hidden:!($parent.$data.hospitalInfos.hospitalName.iserror||$parent.$data.hospitalInfos.contactName.iserror)}">请输入红框标出的是必填项！</label>
-                        <button @click="applyEdithospital()" type="button" id="btnConfirm" class="btn btn-primary" v-bind:class="{disabled:($parent.$data.hospitalInfos.hospitalName.iserror&&$parent.$data.hospitalInfos.contactName.iserror)}">确认</button>
+                        <label id="error" class="label-danger"><span v-show="errors.has('username')||errors.has('contactPerson')" class="help is-danger">请输入红框中的必填项</span></label>
+                        <button @click="applyEdithospital()" type="button" id="btnConfirm" class="btn btn-primary">确认</button>
                         <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
                     </div>
                 </div>
@@ -91,22 +91,13 @@ export default {
   },
   methods:{
     //添加医院
-     applyEdithospital(){        
+     applyEdithospital(){       
+
         var url = this.GLOBAL.hostIp;
         //验证必填框是否填写      
-        if (this.$parent.$data.hospitalInfos.hospitalName.name =="") {
-                this.$parent.$data.hospitalInfos.hospitalName.iserror = true;
-        }else{
-            this.$parent.$data.hospitalInfos.hospitalName.iserror = false;
-        };
-        if (this.$parent.$data.hospitalInfos.contactName.name =="") {
-                this.$parent.$data.hospitalInfos.contactName.iserror = true;
-        }else{
-            this.$parent.$data.hospitalInfos.contactName.iserror = false;
-        };
-    var isclick = this.$parent.$data.hospitalInfos.hospitalName.iserror||this.$parent.$data.hospitalInfos.contactName.iserror;
-      if(!isclick){
-        var data = {
+        this.$validator.validateAll().then(() => {
+        // eslint-disable-next-line
+         var data = {
           name:this.$parent.$data.hospitalInfos.hospitalName.name,
           Description:this.$parent.$data.hospitalInfos.hospitalDesc,
           ShortCode:this.$parent.$data.hospitalInfos.hospitalAbbr,
@@ -130,7 +121,9 @@ export default {
                 console.log("请求已经发送")
               });
       $("#edithospitalInfo").modal("toggle")
-      };        
+      }).catch(() => {
+        // eslint-disable-next-line
+      });  
     },
   }
 }

@@ -14,7 +14,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-10">
-                            <input type="text" id="name" class="form-control" placeholder="名称" v-model="partmentModel.name.name" v-bind:class="{haserror:(partmentModel.name.iserror)}">
+                            <input v-validate="'required'" name="name" type="text" id="name" class="form-control" placeholder="名称" v-model="partmentModel.name.name" v-bind:class="{'haserror': errors.has('name') }">
                         </div>
                     </div>
                     <div class="row">
@@ -31,9 +31,9 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <select id="receipt" class="form-control" v-model="partmentModel.tickets.name" v-bind:class="{haserror:(partmentModel.tickets.iserror)}">
+                            <select v-validate="'required'" name="receipt" id="receipt" class="form-control" v-model="partmentModel.tickets.name" v-bind:class="{'haserror': errors.has('receipt') }">
                                 <option value="">请选择发票抬头</option>
-                            <option value="7d463995-5007-4922-9adc-0dafc9a45ed9">普通发票</option></select>
+                            <option v-for="item in $parent.$data.receiptInfo" v-bind:value="item.id" v-text="item.title"></option></select>
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label" for="formNo">业务类型</label>
@@ -57,7 +57,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-model="partmentModel.contactName.name" v-bind:class="{haserror:(partmentModel.contactName.iserror)}">
+                            <input v-validate="'required'" name="contactPerson" type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-model="partmentModel.contactName.name" v-bind:class="{'haserror': errors.has('contactPerson') }">
                         </div>
                     </div>
                     <div class="row">
@@ -99,6 +99,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <label id="error" class="label-danger"><span v-show="errors.has('name')||errors.has('receipt')||errors.has('contactPerson')" class="help is-danger">请输入红框中的必填项</span></label>
                 <button type="button" class="btn btn-primary" id="btnConfirm" @click="addPartment">确认</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">关闭</button>
             </div>
@@ -142,24 +143,9 @@ export default {
         var url = this.GLOBAL.hostIp;
         var _this = this.$parent.$data;
               //验证必填框是否填写      
-        if (this.partmentModel.name.name =="") {
-                this.partmentModel.name.iserror = true;
-        }else{
-            this.partmentModel.name.iserror = false;
-        };
-        if (this.partmentModel.tickets.name =="") {
-                this.partmentModel.tickets.iserror = true;
-        }else{
-            this.partmentModel.tickets.iserror = false;
-        };
-        if (this.partmentModel.contactName.name =="") {
-                this.partmentModel.contactName.iserror = true;
-        }else{
-            this.partmentModel.contactName.iserror = false;
-        };
-    var isclick = this.partmentModel.name.iserror||this.partmentModel.contactName.iserror||this.partmentModel.tickets.iserror;
-      if(!isclick){
-        var  data = {
+        this.$validator.validateAll().then(() => {
+        // eslint-disable-next-line
+         var  data = {
           Name:this.partmentModel.name.name,
           Description:this.partmentModel.hospitalDesc,
           ShortCode:this.partmentModel.hospitalAbbr,
@@ -183,7 +169,13 @@ export default {
                 // error callback
               });
       $("#hospitalUnitInfo").modal("toggle")
-      }; 
+      }).catch(() => {
+        // eslint-disable-next-line
+        
+      });
+    
+       
+      
       },
   }
 }

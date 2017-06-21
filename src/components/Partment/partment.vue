@@ -119,7 +119,8 @@ export default {
       partmentlist:[],
       systemFunctionsInfos:[],
       contactInfo:{},
-      relUnitId:""
+      relUnitId:"",
+      receiptInfo:{}
     }
   },
    computed:{
@@ -204,6 +205,7 @@ $("#hospitalUnitInfo").modal("toggle")
        var searchmsg = this.searchInfo;
       var _this = this;
       var url = this.GLOBAL.hostIp;
+      var hospitalId = this.parentId;
         this.$http.post(url+'/HospitalSetting/QueryUnits',searchmsg,{emulateJSON: true,credentials: true}).then(response => {
         var body = response.body;
         if (body.isSuccess) {
@@ -212,14 +214,21 @@ $("#hospitalUnitInfo").modal("toggle")
       },response => {
                 // error callback
               });      
-    
+     this.$http.post(url+'/HospitalSetting/JsonReceipts',{"hospitalId":hospitalId},{emulateJSON: true,credentials: true}).then(response => {
+        var body = response.body;
+        if (body.isSuccess) {
+           _this.receiptInfo = body.data.receipts;
+        };
+      },response => {
+                // error callback
+              });  
     },
     //获取部门息进行编辑
     editPartment(id){
         var _this = this;
         var url = this.GLOBAL.hostIp;
         this.$http.post(url+'/VendorSetting/UnitQueryById',{id:id},{emulateJSON: true,credentials: true}).then(response => {
-            var body = response.body;
+            var body = response.body;            
                if (body.isSuccess) {
                     var editinfo = body.data;
                     _this.partmentModel.name.name = editinfo.name;
@@ -232,8 +241,9 @@ $("#hospitalUnitInfo").modal("toggle")
                     _this.partmentModel.contactMethod3 = editinfo.contactInfo.contactWay3;
                     _this.partmentModel.contactMethod4 = editinfo.contactInfo.contactWay4;
                     _this.partmentModel.hostipalId =  editinfo.rootId;
-                    _this.partmentModel.tickets.name = editinfo.tickets;
+                    _this.partmentModel.tickets.name = editinfo.receipt.id;
                     _this.partmentModel.type = editinfo.type;
+
                };                
               }, response => {
                 // error callback

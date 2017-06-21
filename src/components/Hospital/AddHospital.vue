@@ -1,7 +1,6 @@
 <template>
       <div class="modal fade" id="hospitalInfo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;">
-            <div class="modal-dialog modal-lg" role="document">
-            
+            <div class="modal-dialog modal-lg" role="document">            
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -74,8 +73,7 @@
                     </div>
                     <div class="modal-footer">
                         <label id="error" class="label-danger"><span v-show="errors.has('username')||errors.has('contactPerson')" class="help is-danger">请输入红框中的必填项</span></label>
-                         <!-- <label id="error" class="label-danger" v-bind:class="{hidden:!(this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror)}">请输入红框标出的是必填项！</label> -->
-                        <button @click="addhospital()" type="button" id="btnConfirm" class="btn btn-primary" v-bind:class="{disabled:errors.has('username')||errors.has('contactPerson')}">确认</button>
+                        <button @submit.prevent="validateBeforeSubmit" @click="addhospital()" type="submit" id="btnConfirm" class="btn btn-primary" >确认</button>
                         <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
                     </div>                    
                 </div>
@@ -115,21 +113,10 @@ export default {
   methods:{
     //添加医院
     addhospital(){      
-    var url = this.GLOBAL.hostIp;  
-        //验证必填框是否填写      
-        if (this.hospitalInfos.hospitalName.name =="") {
-                this.hospitalInfos.hospitalName.iserror = true;
-        }else{
-            this.hospitalInfos.hospitalName.iserror = false;
-        };
-        if (this.hospitalInfos.contactName.name =="") {
-                this.hospitalInfos.contactName.iserror = true;
-        }else{
-            this.hospitalInfos.contactName.iserror = false;
-        };
-    var isclick = this.hospitalInfos.hospitalName.iserror||this.hospitalInfos.contactName.iserror;
-      if(!isclick){
-        var addHospitalInfo = {
+        var url = this.GLOBAL.hostIp; 
+        this.$validator.validateAll().then(() => {
+          // eslint-disable-next-line
+           var addHospitalInfo = {
           name:this.hospitalInfos.hospitalName.name,
           description:this.hospitalInfos.hospitalDesc,
           ShortCode:this.hospitalInfos.hospitalAbbr,
@@ -141,10 +128,9 @@ export default {
             ContactWay2:this.hospitalInfos.contactMethod2,
             ContactWay3:this.hospitalInfos.contactMethod3,
             ContactWay4:this.hospitalInfos.contactMethod4
-          }
-          
+          }          
       };
-       this.$http.post(url+"/HospitalSetting/Hospitalsave",addHospitalInfo,{emulateJSON: true}).then(response => {               
+       this.$http.post(url+"/HospitalSetting/Hospitalsave",addHospitalInfo,{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                    
               var body = response.body;
               if (body.isSuccess) {
@@ -155,7 +141,11 @@ export default {
                 // error callback
               });
       $("#hospitalInfo").modal("toggle")
-      };        
+      }).catch(() => {
+          // eslint-disable-next-line
+      });     
+        //验证必填框是否填写    
+           
     },
   }
 }

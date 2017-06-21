@@ -14,7 +14,7 @@
                             <label class="control-label" for="formNo">院方/供应商</label>
                         </div>
                         <div class="col-sm-10">
-                            <select id="roots" class="form-control" v-model="userModel.root" v-on:change="applyunit"><optgroup label="院方"><option v-for="item in $parent.$data.addUserHospital" v-bind:value="item.value" v-text="item.name"></option></optgroup><optgroup label="供应商"><option v-for="item in $parent.$data.addUserVender" v-bind:value="item.value" v-text="item.name"></option></optgroup></select>
+                            <select id="roots" class="form-control" v-model="$parent.$data.userModel.root" v-on:change="applyunit"><optgroup label="院方"><option v-for="item in $parent.$data.hospital" v-bind:value="item.id" v-text="item.name"></option></optgroup><optgroup label="供应商"><option v-for="item in $parent.$data.vendor" v-bind:value="item.id" v-text="item.name"></option></optgroup></select>
                         </div>
                     </div>
                     <div class="row">
@@ -23,7 +23,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-10">
-                            <select id="units" required="" class="form-control" v-model="userModel.unit"><option value="">请选择...</option><option v-for="item in $parent.$data.addUserUnit" v-bind:value="item.value" v-text="item.name"></option></select>
+                            <select v-validate="'required'" name="units" :class="{'haserror': errors.has('units') }" id="units" required="" class="form-control" v-model="$parent.$data.userModel.unit"><option value="">请选择...</option><option v-for="item in addUnit" v-bind:value="item.id" v-text="item.name"></option></select>
                         </div>
                     </div>
                     <div class="form-inline">
@@ -33,14 +33,14 @@
                                 <span class="require-label">*</span>
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" id="name" class="form-control" required="" placeholder="姓名" maxlength="50" v-model="userModel.name">
+                                <input v-validate="'required'" name="name" :class="{'haserror': errors.has('name') }" type="text" id="name" class="form-control" required="" placeholder="姓名" maxlength="50" v-model="$parent.$data.userModel.name">
                             </div>
                             <div class="col-sm-2">
                                 <label class="control-label" for="formNo">账号</label>
                                 <span class="require-label">*</span>
                             </div>
                             <div class="col-sm-4">
-                                <input type="text" id="account" class="form-control" required="" placeholder="账号" maxlength="50" v-model="userModel.account">
+                                <input v-validate="'required'" name="account" :class="{'haserror': errors.has('account') }" type="text" id="account" class="form-control" required="" placeholder="账号" maxlength="50" v-model="$parent.$data.userModel.account">
                             </div>
                         </div>
                         <div class="row">
@@ -49,14 +49,14 @@
                                 <span class="require-label password">*</span>
                             </div>
                             <div class="col-sm-4">
-                                <input type="password" id="password" class="form-control" required="" placeholder="密码" maxlength="50" v-model="userModel.password">
+                                <input v-validate="'required'" name="password" :class="{'haserror': errors.has('password') }" type="password" id="password" class="form-control" required="" placeholder="密码" maxlength="50" v-model="$parent.$data.userModel.password">
                             </div>
                             <div class="col-sm-2">
                                 <label class="control-label">重复密码</label>
                                 <span class="require-label password">*</span>
                             </div>
                             <div class="col-sm-4">
-                                <input type="password" id="validPassword" class="form-control" required="" placeholder="重复密码" maxlength="50" v-model="userModel.repeatPassword">
+                                <input v-validate="'required'" name="validPassword" :class="{'haserror': errors.has('validPassword') }" type="password" id="validPassword" class="form-control" required="" placeholder="重复密码" maxlength="50" v-model="$parent.$data.userModel.repeatPassword">
                             </div>
                         </div>
                         <div class="row">
@@ -65,7 +65,7 @@
                                 <span class="require-label">*</span>
                             </div>
                             <div class="col-sm-4">
-                                <select id="title" class="form-control" v-model="userModel.place">
+                                <select v-validate="'required'" name="title" :class="{'haserror': errors.has('title') }" id="title" class="form-control" v-model="$parent.$data.userModel.place">
                                     <option value="0">员工</option>
                                     <option value="1">主管</option>
                                 </select>
@@ -74,7 +74,7 @@
                     </div>
                 </div>
             <div class="modal-footer">
-                <label id="error" class="label-danger hidden">请输入红框标出的是必填项！</label>
+                <label id="error" class="label-danger"><span v-show="errors.has('units')||errors.has('account')||errors.has('name')||errors.has('password')||errors.has('validPassword')||errors.has('title')" class="help is-danger">请输入红框中的必填项</span></label>
                 <button type="button" id="btnConfirm" class="btn btn-primary" @click="applyAddUser">确认</button>
                 <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
@@ -88,33 +88,61 @@
 export default {
   name: 'addUser',
   data () {
-    return {     
-        userModel:{
-          root:"",
-          unit:"",
-          name:"",
-          account:"",
-          password:"",
-          repeatPassword:"",
-          place:""
-        }, 
+    return {             
+        addUnit:[]
     }
   },
-  methods:{
-   applyunit(){
-    var _this = this.$parent.$data;
+  methods:{   
+    applyAddUser(){
+        var _this = this.$parent.$data;
+        var url = this.GLOBAL.hostIp;
+        this.$validator.validateAll().then(() => {
+        // eslint-disable-next-line
+        var data = {
+            Name:_this.userModel.name,
+            Account:_this.userModel.account,
+            Password:_this.userModel.password,
+            validPassword:_this.userModel.repeatPassword,
+            UnitId:_this.userModel.unit,
+            title:_this.userModel.place
+        };
+        this.$http.post(url+"/User/Save",data,{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data    
+                var body = response.body;                              
+                if (body.isSuccess) {
+                  console.log(1)
+                   $("#userInfo").modal("toggle")
+                    //_this.hospital = data.hospital;
+                    //_this.vendor = data.vendor;
+                } else{};                
+              }, response => {
+                // error callback
+              });
+      }).catch(() => {
+        // eslint-disable-next-line
+        
+      });
+
+        
+    },
+     applyunit(){
     var val = $(event.currentTarget).val();
-    this.$http.get('./static/addUser.json',{params:{val:val}}).then(response => {
-            var data = response.body;
-            _this.addUserUnit = data.unit;
-              
+     var _this = this;
+    var url = this.GLOBAL.hostIp;
+       this.$http.post(url+"/Unit/GetUnits",{parentId:val},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data    
+                var body = response.body;                              
+                if (body.isSuccess) {
+                  var  data = body.data;
+                  _this.addUnit = data;
+                    //_this.hospital = data.hospital;
+                    //_this.vendor = data.vendor;
+                } else{};
+                
               }, response => {
                 // error callback
               });
     },
-    applyAddUser(){
-        
-    }
    }  
 }
 </script>

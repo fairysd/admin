@@ -235,18 +235,14 @@ export default {
       var searchmsg = this.searchmsg;
       var url = this.GLOBAL.hostIp;
       var _this = this;
-      // var hospitallist = this.hostipallist;
-      if (searchmsg === "") {
-        alert("请输入查询关键词")
-      }else{
-        this.$http.post(url+"/HospitalSetting/Query",{"condition":searchmsg},{emulateJSON: true,credentials: true}).then(response => {
+      // var hospitallist = this.hostipallist;      
+        this.$http.post(url+"/HospitalSetting/JsonQuery",{"condition":searchmsg},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
             _this.hostipallist = data;
           };
-      })
-    }
+      })    
     },
     //获取医院信息进行编辑
     editHospital(id){
@@ -392,6 +388,9 @@ export default {
   padding-top: 0;
  }
  input.form-control.haserror{
+    border: 1px solid #DC143C;
+ }
+ select.form-control.haserror{
     border: 1px solid #DC143C;
  }
   #systemFunctionsInfo span{

@@ -14,7 +14,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="name" class="form-control" required="" placeholder="名称" maxlength="50" v-model="$parent.$data.productModel.name.value" v-bind:class="{haserror:($parent.$data.productModel.name.iserror)}">
+                            <input v-validate="'required'" name="name" v-bind:class="{'haserror': errors.has('name')}" type="text" id="name" class="form-control" required="" placeholder="名称" maxlength="50" v-model="$parent.$data.productModel.name.value" >
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">全称</label>
@@ -29,13 +29,14 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="name" class="form-control" required="" placeholder="注册证号" maxlength="50" v-model="$parent.$data.productModel.registerNumber" v-bind:class="{haserror:($parent.$data.productModel.name.iserror)}">
+                            <input v-validate="'required'" name="registerNumber" v-bind:class="{'haserror': errors.has('registerNumber')}" type="text" id="registerNumber" class="form-control" required="" placeholder="注册证号" maxlength="50" v-model="$parent.$data.productModel.registerNumber">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">有效日期</label>
+                            <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="fullName" class="form-control" placeholder="有效日期" maxlength="100" v-model="$parent.$data.productModel.validDate">
+                            <input v-validate="'required'" name="validDate" v-bind:class="{'haserror': errors.has('validDate')}" type="text" id="validDate" class="form-control" placeholder="有效日期" maxlength="100" v-model="$parent.$data.productModel.validDate">
                         </div>
                     </div>
                     <div class="row">
@@ -64,7 +65,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="miniPackageUnit" class="form-control" required="" placeholder="最小包装单位" maxlength="10" v-model="$parent.$data.productModel.miniPackageUnit.value" v-bind:class="{haserror:($parent.$data.productModel.miniPackageUnit.iserror)}">
+                            <input v-validate="'required'" name="miniPackageUnit" v-bind:class="{'haserror': errors.has('miniPackageUnit')}" type="text" id="miniPackageUnit" class="form-control" required="" placeholder="最小包装单位" maxlength="10" v-model="$parent.$data.productModel.miniPackageUnit.value" >
                         </div>
                     </div>
                     <div class="row">
@@ -73,7 +74,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="miniPackageCount" class="form-control" required="" placeholder="含最小包装数" maxlength="10" v-model="$parent.$data.productModel.miniPackageCount.value" v-bind:class="{haserror:($parent.$data.productModel.miniPackageCount.iserror)}">
+                            <input v-validate="'required'" name="miniPackageCount" v-bind:class="{'haserror': errors.has('miniPackageCount')}" type="text" id="miniPackageCount" class="form-control" required="" placeholder="含最小包装数" maxlength="10" v-model="$parent.$data.productModel.miniPackageCount.value">
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label">标准包装单位</label>
@@ -81,22 +82,7 @@
                         <div class="col-sm-4">
                             <input type="text" id="packageUnit" class="form-control" placeholder="标准包装单位" maxlength="10" v-model="$parent.$data.productModel.standardUnit">
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-2">
-                            <label class="control-label">注册证号</label>
-                            <span class="require-label">*</span>
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" id="registerNumber" class="form-control" required="" placeholder="注册证号" maxlength="10" v-model="$parent.$data.productModel.registerNumber" >
-                        </div>
-                        <div class="col-sm-2">
-                            <label class="control-label">有效日期</label>
-                        </div>
-                        <div class="col-sm-4">
-                            <input type="text" id="validDate" class="form-control" placeholder="有效日期" maxlength="10" v-model="$parent.$data.productModel.validDate">
-                        </div>
-                    </div>
+                    </div>                    
                     <div class="row">
                         <div class="col-sm-2">
                             <label class="control-label">分类</label>
@@ -114,7 +100,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <label id="error" class="label-danger" v-bind:class="{hidden:!($parent.$data.productModel.name.iserror||$parent.$data.productModel.miniPackageUnit.iserror||$parent.$data.productModel.miniPackageCount.iserror)}">请输入红框标出的是必填项！</label>
+                <label id="error" class="label-danger"><span v-show="errors.has('name')||errors.has('registerNumber')||errors.has('validDate')||errors.has('miniPackageUnit')||errors.has('miniPackageCount')" class="help is-danger">请输入红框中的必填项</span></label>
                 <button type="button" id="btnConfirm" class="btn btn-primary" @click="applyAddProduct">确认</button>
                 <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
@@ -134,24 +120,10 @@ export default {
      applyAddProduct(){     
         var url = this.GLOBAL.hostIp;         
               //验证必填框是否填写      
-        if (this.$parent.$data.productModel.name.value =="") {
-                this.$parent.$data.productModel.name.iserror = true;
-        }else{
-            this.$parent.$data.productModel.name.iserror = false;
-        };
-        if (this.$parent.$data.productModel.miniPackageUnit.value =="") {
-                this.$parent.$data.productModel.miniPackageUnit.iserror = true;
-        }else{
-            this.$parent.$data.productModel.miniPackageUnit.iserror = false;
-        };
-        if (this.$parent.$data.productModel.miniPackageCount.value =="") {
-                this.$parent.$data.productModel.miniPackageCount.iserror = true;
-        }else{
-            this.$parent.$data.productModel.miniPackageCount.iserror = false;
-        };
-    var isclick = this.$parent.$data.productModel.name.iserror||this.$parent.$data.productModel.miniPackageUnit.iserror||this.$parent.$data.productModel.miniPackageCount.iserror;
-      if(!isclick){
-         var data = {
+       
+    this.$validator.validateAll().then(() => {
+        // eslint-disable-next-line
+        var data = {
             id:0,
             Name:this.$parent.$data.productModel.name.value,
             FullName:this.$parent.$data.productModel.wholeName,
@@ -166,13 +138,17 @@ export default {
             Category:this.$parent.$data.productModel.class,
             IsLocal:this.$parent.$data.productModel.domestic
       };
-       this.$http.post(url+"/Product/Save",data,{emulateJSON: true}).then(response => {               
+       this.$http.post(url+"/Product/Save",data,{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                               
               }, response => {
                 // error callback
               });
       $("#productInfo").modal("toggle")
-      }; 
+      }).catch(() => {
+        // eslint-disable-next-line        
+      });
+         
+      
     },
     }
 }

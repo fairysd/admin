@@ -48,7 +48,7 @@
                     <span class="sr-only">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="#" class="userPrivilege" @click="relativePartment(item.id)">关联单位</a></li>
+                    <li><a href="#" class="userPrivilege" data-target="#userPrivilegesInfo" data-toggle="modal" @click="relativePartment(item.id)">关联单位</a></li>
                 </ul>
             </div>
         </td>
@@ -69,6 +69,7 @@
     <addUser></addUser>
     <!-- 添加用户 -->
     <editUser></editUser>
+    <relUser></relUser>
     </div>
 
 </template>
@@ -76,9 +77,10 @@
 <script>
  import addUser from './addUser'
  import editUser from './editUser'
+  import relUser from './relUser'
 export default {
     name: 'user',
-    components: {addUser,editUser},
+    components: {addUser,editUser,relUser},
   data () {
     return {
     current:"",
@@ -100,12 +102,13 @@ export default {
       place:""
     },
     editUserModel:{
-        unit:"",
+        unitId:"",
         name:"",
         account:"",
         password:"",
-        repeatPassword:"",
-        place:""
+        validPassword:"",
+        title:"",
+        id:""
     },    
     addUserHospital:[],
     addUserVender:[],
@@ -116,6 +119,7 @@ export default {
         unitId:"",
         condition:""
     },
+    currentUserId:""
     }
   },
   computed:{
@@ -194,19 +198,7 @@ export default {
         password:"",
         repeatPassword:"",
         place:""
-       };    
-      //获取供应商和院方列表
-      this.$http.get('./static/addUser.json').then(response => {               
-                  // get body data                                
-                  var _this = this;               
-                  var data = response.body;
-                  this.addUserHospital = data.hospital;
-                  this.addUserVender = data.vender;
-                  this.addUserUnit = data.unit;
-                  
-                }, response => {
-                  // error callback
-                });      
+       };             
     },
     applyunit(){
     var val = $(event.currentTarget).val();
@@ -229,13 +221,30 @@ export default {
   //编辑
     editUser(id){
         //发送用户id获取数据
-         this.$http.get('./static/editUser.json',{params:{id:id}}).then(response => {
-            var data = response.body;
-            this.editUserModel = data.editUserInfo;       
-            this.editUserUnit = data.unit;
+        var _this = this;
+    var url = this.GLOBAL.hostIp;
+          this.$http.post(url+"/User/JsonEdit",{id:id},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data    
+                var body = response.body;                              
+                if (body.isSuccess) {
+                  var data = body.data;
+                  _this.editUserModel.unitId = data.unitId;
+                  _this.editUserModel.name = data.name;
+                  _this.editUserModel.account = data.account;
+                  _this.editUserModel.password = "";
+                  _this.editUserModel.validPassword = "";
+                  _this.editUserModel.title = data.title;
+                  _this.editUserModel.id = data.id;
+                    //_this.hospital = data.hospital;
+                    //_this.vendor = data.vendor;
+                } else{};
+                
               }, response => {
                 // error callback
               });
+    },
+    relativePartment(id){
+        this.currentUserId = id;
     }
   },
  

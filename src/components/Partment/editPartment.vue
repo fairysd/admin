@@ -14,7 +14,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-10">
-                            <input type="text" id="name" class="form-control" placeholder="名称" v-model="$parent.$data.partmentModel.name.name" v-bind:class="{haserror:($parent.$data.partmentModel.name.iserror)}">
+                            <input v-validate="'required'" name="name" type="text" id="name" class="form-control" placeholder="名称" v-model="$parent.$data.partmentModel.name.name" v-bind:class="{'haserror': errors.has('name')}">
                         </div>
                     </div>
                     <div class="row">
@@ -31,9 +31,9 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <select id="receipt" class="form-control" v-model="$parent.$data.partmentModel.tickets.name" v-bind:class="{haserror:($parent.$data.partmentModel.tickets.iserror)}">
+                            <select v-validate="'required'" name="receipt" id="receipt" class="form-control" v-model="$parent.$data.partmentModel.tickets.name" v-bind:class="{'haserror': errors.has('receipt')}">
                                 <option value="">请选择发票抬头</option>
-                            <option value="7d463995-5007-4922-9adc-0dafc9a45ed9">普通发票</option></select>
+                            <option v-for="item in $parent.$data.receiptInfo" v-bind:value="item.id" v-text="item.title"></option></select>
                         </div>
                         <div class="col-sm-2">
                             <label class="control-label" for="formNo">业务类型</label>
@@ -57,7 +57,7 @@
                             <span class="require-label">*</span>
                         </div>
                         <div class="col-sm-4">
-                            <input type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-model="$parent.$data.partmentModel.contactName.name" v-bind:class="{haserror:($parent.$data.partmentModel.contactName.iserror)}">
+                            <input v-validate="'required'" name="contactPerson" type="text" id="contactPerson" class="form-control" placeholder="联系人" maxlength="50" v-model="$parent.$data.partmentModel.contactName.name" v-bind:class="{'haserror': errors.has('contactPerson') }">
                         </div>
                     </div>
                     <div class="row">
@@ -99,6 +99,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <label id="error" class="label-danger"><span v-show="errors.has('name')||errors.has('receipt')||errors.has('contactPerson')" class="help is-danger">请输入红框中的必填项</span></label>
                 <button type="button" class="btn btn-primary" id="btnConfirm" @click="applyEditPartment">确认</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">关闭</button>
             </div>
@@ -119,48 +120,38 @@ export default {
       applyEditPartment(){
         var url = this.GLOBAL.hostIp;
         var _this = this.$parent.$data;
-              //验证必填框是否填写      
-        if (_this.partmentModel.name.name =="") {
-                _this.partmentModel.name.iserror = true;
-        }else{
-            _this.partmentModel.name.iserror = false;
-        };
-        if (_this.partmentModel.tickets.name =="") {
-                _this.partmentModel.tickets.iserror = true;
-        }else{
-            _this.partmentModel.tickets.iserror = false;
-        };
-        if (_this.partmentModel.contactName.name =="") {
-                _this.partmentModel.contactName.iserror = true;
-        }else{
-            _this.partmentModel.contactName.iserror = false;
-        };
-    var isclick = _this.partmentModel.name.iserror||_this.partmentModel.contactName.iserror||_this.partmentModel.tickets.iserror;
-      if(!isclick){
-        var data = {
-          Name:_this.partmentModel.name.name,
-          Description:_this.partmentModel.hospitalDesc,
-          ShortCode:_this.partmentModel.hospitalAbbr,
-          ReceiptId:_this.partmentModel.tickets.name,
-          Type:_this.partmentModel.type,
-          ContactInfo:{
-              ContactPerson:_this.partmentModel.contactName.name,
-              Address:_this.partmentModel.contactAddress,
-              ContactWay1:_this.partmentModel.contactMethod1,
-              ContactWay2:_this.partmentModel.contactMethod2,
-              ContactWay3:_this.partmentModel.contactMethod3,
-              ContactWay4:_this.partmentModel.contactMethod4,
-          },          
-          RootId:_this.partmentModel.hostipalId       
-      };
-         this.$http.post(url+'/HospitalSetting/SaveHospitalUnit',data,{emulateJSON: true,credentials: true}).then(response => {
-            alert("修改成功")
-        },response => {
-                // error callback
-                console.log("请求已经发送")
-              });
-      $("#edithospitalUnitInfo").modal("toggle")
-      }; 
+              //验证必填框是否填写     
+              this.$validator.validateAll().then(() => {
+        // eslint-disable-next-line
+                    var data = {
+                      Name:_this.partmentModel.name.name,
+                      Description:_this.partmentModel.hospitalDesc,
+                      ShortCode:_this.partmentModel.hospitalAbbr,
+                      ReceiptId:_this.partmentModel.tickets.name,
+                      Type:_this.partmentModel.type,
+                      ContactInfo:{
+                          ContactPerson:_this.partmentModel.contactName.name,
+                          Address:_this.partmentModel.contactAddress,
+                          ContactWay1:_this.partmentModel.contactMethod1,
+                          ContactWay2:_this.partmentModel.contactMethod2,
+                          ContactWay3:_this.partmentModel.contactMethod3,
+                          ContactWay4:_this.partmentModel.contactMethod4,
+                      },          
+                      RootId:_this.partmentModel.hostipalId       
+                  };
+                     this.$http.post(url+'/HospitalSetting/SaveHospitalUnit',data,{emulateJSON: true,credentials: true}).then(response => {
+                        alert("修改成功")
+                    },response => {
+                            // error callback
+                            console.log("请求已经发送")
+                          });
+                  $("#edithospitalUnitInfo").modal("toggle")
+      }).catch(() => {
+        // eslint-disable-next-line
+      }); 
+       
+        
+       
       },
   }
 }

@@ -16,7 +16,7 @@
                                     <span class="require-label">*</span>
                                 </div>
                                 <div class="col-sm-4">
-                                    <select class="form-control" required="" id="units" v-model="applyModel.partment.value" v-bind:class="{haserror:(applyModel.partment.iserror)}">
+                                    <select v-validate="'required'" name="units" class="form-control" required="" id="units" v-model="applyModel.partment.value" v-bind:class="{'haserror': errors.has('units') }">
                                         <option value="">请选择申请单位</option>
                                         <option v-for="item in $parent.$data.applyProduct.units" v-bind:value="item.id" v-text="item.name"></option>
                                     </select>
@@ -26,7 +26,7 @@
                                     <span class="require-label">*</span>
                                 </div>
                                 <div class="col-sm-4">
-                                    <select class="form-control" required="" id="products" v-on:change="applyProductBind" v-model="applyModel.product.value" v-bind:class="{haserror:(applyModel.product.iserror)}">
+                                    <select v-validate="'required'" name="product" class="form-control" required="" id="products" v-on:change="applyProductBind" v-model="applyModel.product.value" v-bind:class="{'haserror': errors.has('product') }">
                                         <option value="">请选择产品</option>
                                         <option v-for="product in $parent.$data.applyProduct.products" v-bind:value="product.id" v-text="product.name"></option>
                                     </select>
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <label id="error" class="label-danger" v-bind:class="{hidden:!(this.applyModel.partment.iserror||this.applyModel.price.iserror||this.applyModel.product.iserror)}">请填写完整的信息，再确认！</label>
+                        <label id="error" class="label-danger"><span v-show="errors.has('units')||errors.has('product')" class="help is-danger">请选择红框中的必填项</span></label>
                         <button type="button" class="btn btn-primary" id="btnConfirm" @click="submitApply">确认</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">关闭</button>
                     </div>
@@ -199,25 +199,10 @@ export default {
         //验证必填框是否填写      
         var _this = this;
         var url = this.GLOBAL.hostIp;
-       if (this.applyModel.partment.value =="") {
-                this.applyModel.partment.iserror = true;
-        }else{
-            this.applyModel.partment.iserror = false;
-        };
-        if (this.applyModel.product.value =="") {
-                this.applyModel.product.iserror = true;
-        }else{
-            this.applyModel.product.iserror = false;
-        };
-        if (this.applyModel.price.name =="") {
-                this.applyModel.price.iserror = true;
-        }else{
-            this.applyModel.price.iserror = false;   
-        };
-    var isclick = this.applyModel.partment.iserror||this.applyModel.price.iserror||this.applyModel.product.iserror;
-      if(!isclick){
-         //
-         var data = {
+       
+         this.$validator.validateAll().then(() => {
+        // eslint-disable-next-line
+      var data = {
             HospitalId:_this.$parent.$data.applyProductHospitalId,
             UnitId: _this.applyModel.partment.value,
             ProductId:_this.applyModel.product.value,
@@ -246,7 +231,13 @@ export default {
                 // error callback
               });
       $("#hospitalProductsInfo").modal("toggle")
-      }; 
+      }).catch(() => {
+        // eslint-disable-next-line
+       
+      });
+         //
+         
+      
     },
   }
 }

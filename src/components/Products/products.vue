@@ -104,7 +104,8 @@ export default {
         },
         standardUnit:"",
         class:"",
-        domestic:true
+        domestic:true,
+        id:""
       }      
     }
   },
@@ -172,7 +173,8 @@ export default {
         },
         standardUnit:"",
         class:"",
-        domestic:true
+        domestic:true,
+        id:""
       } 
     },
    
@@ -198,6 +200,7 @@ export default {
                     _this.productModel.domestic =  data.isLocal;
                     _this.productModel.registerNumber =  data.registerNumber;
                     _this.productModel.validDate =  data.validDate;
+                    _this.productModel.id = data.id;
                };                
               }, response => {
                 // error callback
@@ -210,7 +213,7 @@ export default {
       if (searchmsg === "") {
         alert("请输入查询关键词")
       }else{
-        this.$http.post(url+"/Product/Query",{"condition":searchmsg},{emulateJSON: true}).then(response => {        
+        this.$http.post(url+"/Product/Query",{"condition":searchmsg},{emulateJSON: true,credentials: true}).then(response => {        
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
