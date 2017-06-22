@@ -15,11 +15,9 @@
                                     <label class="control-label" for="formNo">表单</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <select id="auditForms" class="form-control">
+                                    <select id="auditForms" class="form-control" v-on:change="GetFormApproveList">
                                         <option value=""></option>
-                                        <option value="orderAudit">订货审核</option>
-                                        <option value="inspectionAudit">验货审核</option>
-                                        <option value="moveAudit">移库审核</option>
+                                        <option v-for="(key,value) in $parent.$data.approveList" v-bind:value="value" v-text="key">订货审核</option>                                       
                                     </select>
                                 </div>
                             </div>
@@ -51,7 +49,7 @@
                                             <input id="selectManager" class="form-control hidden" autocomplete="off"></div>
                                     </td>
                                     <td>
-                                        <button href="#" id="selectSave" class="btn btn-primary" @click="sava">保存</button>
+                                        <button href="#" id="selectSave" class="btn btn-primary" >保存</button>
                                     </td>
                                 </tr>
                             </tfoot>
@@ -70,14 +68,23 @@ export default {
   name: 'approveList',
   data () {
     return {     
-        sava(){
-            //发送http请求保存数据
-            alert("保存成功")
-        }
-    }
+}
   },
   methods:{
-
+        GetFormApproveList(){
+            var _this = this;
+            var url = this.GLOBAL.hostIp;
+            var val = $(event.currentTarget).val();
+        this.$http.post(url+"/HospitalSetting/GetFormApproveList",{formType:val},{emulateJSON: true,credentials: true}).then(response => {            
+              var body = response.body;
+              if (body.isSuccess) {
+                  
+              } else{};
+              }, response => {
+                // error callback
+                console.log("error")
+              });
+        }
   }
 }
 </script>

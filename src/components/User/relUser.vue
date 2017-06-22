@@ -25,7 +25,7 @@
                         <tbody><tr v-for="item in unitModel">
                                 <td v-text="item.name"></td>
                                 <td style="display:none"><input type="checkbox" value="query"></td>
-                                <td><input class="checkedOperation" type="checkbox" value="operate" ></td>
+                                <td><input v-bind:id="item.id" class="checkedOperation" type="checkbox" value="operate" v-bind:checked="item.operate"></td>
                             </tr></tbody>
                     </table>
                     <div id="pageList"></div>
@@ -33,7 +33,7 @@
             </div>
             <div class="modal-footer">
                 <label id="error" class="label-danger hidden">请输入红框标出的是必填项！</label>
-                <button type="button" id="btnConfirm" class="btn btn-primary" >确认</button>
+                <button type="button" id="btnConfirm" class="btn btn-primary" @click="relSubmit">确认</button>
                 <button type="button" id="btnClose" class="btn btn-default" data-dismiss="modal">关闭</button>
             </div>
         </div>
@@ -59,7 +59,7 @@ export default {
             "userId":userId,
             "parentId":val
         }
-        this.$http.post(url+"/SystemFunction/GetUserPrivileges",data,{emulateJSON: true,credentials: true}).then(response => {               
+        this.$http.post(url+"/SystemFunction/JsonGetUserPrivileges",data,{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                    
               var body = response.body;
               if (body.isSuccess) {
@@ -71,6 +71,29 @@ export default {
                 // error callback
               });
     },
+    relSubmit(){
+         var _this = _this;
+          var url = this.GLOBAL.hostIp;      
+         var info = $(".checkedOperation:checked");
+         var rootId = this.unitModel[0].rootId;
+         var userId = this.$parent.$data.currentUserId;
+         var data = [];
+            for (var i = 0; i < info.length; i++) {
+                data.push({
+                    id:$(info[i]).attr("id"),
+                    Query:true,
+                    Operate:true
+                });
+            };
+            this.$http.post(url+'/SystemFunction/SaveUserPrivilege',{rootId:rootId,userId:userId,privileges:data},{emulateJSON: true,credentials: true}).then(response => {
+                
+                
+            },response => {
+                    // error callback
+                    console.log("请求已经发送")
+                  });
+          $("#userPrivilegesInfo").modal("toggle")
+    }
   
    }  
 }

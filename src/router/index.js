@@ -37,11 +37,11 @@ export default new Router({
         },
         {
           path: '/Setting/VendorSetting/Vendors',
-          component: vendorUnits
+          component: vendors
         },
         {
           path: '/Setting/VendorSetting/VendorUnits',
-          component: vendors
+          component: vendorUnits
         },
         {
           path: '/Setting/Product/Index',

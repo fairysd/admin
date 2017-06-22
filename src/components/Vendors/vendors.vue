@@ -4,14 +4,14 @@
             <div class="col-sm-3  title">
                 <h4>供应商</h4>
                 <input type="text" class="form-control" v-model="searchmsg">
-                <button data-target="#hospitalInfo" @click="cleardata" data-toggle="modal" class="btn btn-primary" id="btnAdd">新增</button>
+                <button data-target="#vendorInfo" @click="addVendor" data-toggle="modal" class="btn btn-primary" id="btnAdd">新增</button>
             </div>
             <div class="col-sm-2  col-sm-push-7 search">
                 <button @click="serchHospital()" class="btn btn-primary">查询</button>
             </div>
         </div>
         <div class="col-sm-12">
-            <table id="hospitalList" class="table table-striped">
+            <table id="vendorList" class="table table-striped">
                 <thead>
                     <tr>
                         <th>名称</th>
@@ -21,7 +21,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in hostipallist">
+                    <tr v-for="item in vendorList">
                         <td v-text="item.name"></td>
                         <td v-text="item.description"></td>
                         <td v-text="item.shortCode"></td>
@@ -33,21 +33,9 @@
                                     <span class="sr-only">Toggle Dropdown</span>
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="#" data-target="#edithospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.id)">编辑</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-target="#receipts" data-toggle="modal" class="receipts">发票信息</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-target="#hospitalProductsInfo" data-toggle="modal" class="products" @click="applypProduct(item.id)">申请产品</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.id)">审核产品</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList">审核列表</a>
-                                    </li>
+                                    <li><a href="#" class="edit" data-target="#editVendorInfo" data-toggle="modal" @click="editVendor(item.id)">编辑</a></li>
+                                    <li><a href="#" class="products" data-target="#vendorProductInfo" data-toggle="modal" @click="vendorProduct(item.id)">关联产品</a></li>
+                                    <li><a href="#" class="hospitals" data-target="#vendorHospitalsInfo" data-toggle="modal" @click="vendorHospital(item.id)">关联院方</a></li>
                                 </ul>
                             </div>
                         </td>
@@ -63,15 +51,29 @@
             <li v-show="allpage != current && allpage != 0 " @click="current++ && goto(current++)"><a href="#" >下一页</a></li>
         </ul></nav>
         </div>
+        <!-- 新增供应商 -->
+        <addVendor></addVendor>
+        <!-- 联系信息 -->
+        <contactInfo></contactInfo>
+        <!-- 编辑 -->
+        <editVendor></editVendor>
+        <!-- 关联产品 -->
+        <vendorProduct></vendorProduct>
+        <!-- 关联院方 -->
+        <vendorHospital></vendorHospital>
         </div>
 
   </div>
 </template>
 <script>
-
+import addVendor from './addVendor'
+import contactInfo from './contactInfo'
+import editVendor from './editVendor'
+import vendorProduct from './vendorProduct'
+import vendorHospital from './vendorHospital'
 export default {   
   name: 'vendors',
-  components: {},
+  components: {addVendor,contactInfo,editVendor,vendorProduct,vendorHospital},
   data () {
     return {
 
@@ -79,14 +81,14 @@ export default {
       showItem:"",
       allpage:"",
       searchmsg: '',
-      hostipallist:[],     
-      hospitalInfos:{
-          hospitalName:{
+      vendorList:[],     
+      vendorInfos:{
+          vendorName:{
             name:"",
             iserror:false
           },
-          hospitalDesc:"",
-          hospitalAbbr:"",
+          vendorDesc:"",
+          vendorAbbr:"",
           contactName:
           {
             name:"",
@@ -98,26 +100,14 @@ export default {
           contactMethod3:'',
           contactMethod4:''
       },
-      applyProduct:{},
-      auditingProducts:{
-        auditingHostipals:[],
-        auditingProducts:[]
-      },
+      vendorProducts:{},
+      vendorHospitalInfo:{},
       applyProductInfo:{
         inUse:true,
         otherName:"",
         className:""
       },
-      receiptModel:[
-        {
-            title:"上海阿斯顿学院",
-            interest:"12"
-        },
-        {
-            title:"上海阿斯顿学院",
-            interest:"12"
-        }
-      ],
+     currentVendorId:""
     }
   },
    computed:{
@@ -148,11 +138,11 @@ export default {
       var _this = this;
       // var hospitallist = this.hostipallist;
       
-        this.$http.post(url+"/HospitalSetting/Query",{"condition":""},{emulateJSON: true}).then(response => {
+        this.$http.post(url+"/VendorSetting/QueryVendors",{"condition":""},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
-            _this.hostipallist = data;
+            _this.vendorList = data;
           };
       }, response => {
              // var status = response.status;
@@ -166,14 +156,14 @@ export default {
   },
   methods:{
     //按下新增按钮。清空缓存数据
-    cleardata(){
-        this.hospitalInfos={
-          hospitalName:{
+    addVendor(){
+        this.vendorInfos={
+          vendorName:{
             name:"",
             iserror:false
           },
-          hospitalDesc:"",
-          hospitalAbbr:"",
+          vendorDesc:"",
+          vendorAbbr:"",
           contactName:
           {
             name:"",
@@ -190,15 +180,15 @@ export default {
     displayContactInfo(id){
         var _this = this; 
         var url = this.GLOBAL.hostIp;
-              this.$http.post(url+"/HospitalSetting/GetContactInfo",{"id":id},{emulateJSON: true}).then(response => {               
+              this.$http.post(url+"/HospitalSetting/GetContactInfo",{"id":id},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                    
                 var data = response.body;        
-                    _this.hospitalInfos.contactName.name = data.ContactPerson;
-                    _this.hospitalInfos.contactAddress= data.Address;
-                    _this.hospitalInfos.contactMethod1= data.ContactWay1;
-                    _this.hospitalInfos.contactMethod2= data.ContactWay1;
-                    _this.hospitalInfos.contactMethod3= data.ContactWay1;
-                    _this.hospitalInfos.contactMethod4= data.ContactWay1;      
+                    _this.vendorInfos.contactName.name = data.ContactPerson;
+                    _this.vendorInfos.contactAddress= data.Address;
+                    _this.vendorInfos.contactMethod1= data.ContactWay1;
+                    _this.vendorInfos.contactMethod2= data.ContactWay1;
+                    _this.vendorInfos.contactMethod3= data.ContactWay1;
+                    _this.vendorInfos.contactMethod4= data.ContactWay1;      
               }, response => {
                 // error callback
               });
@@ -211,79 +201,63 @@ export default {
       var url = this.GLOBAL.hostIp;
       var _this = this;
       // var hospitallist = this.hostipallist;
-      if (searchmsg === "") {
-        alert("请输入查询关键词")
-      }else{
-        this.$http.post(url+"/HospitalSetting/Query",{"condition":searchmsg},{emulateJSON: true}).then(response => {
+      
+        this.$http.post(url+"/VendorSetting/QueryVendors",{"condition":searchmsg},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
-            _this.hostipallist = data;
+            _this.vendorList = data;
           };
       })
-    }
+    
     },
     //获取医院信息进行编辑
-    editHospital(id){
+    editVendor(id){
         var _this = this;
         var url = this.GLOBAL.hostIp;
-        this.$http.post(url+'/HospitalSetting/QueryHospitalById',{"id":id},{emulateJSON: true}).then(response => {
+        this.$http.post(url+'/HospitalSetting/QueryHospitalById',{"id":id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
                if (body.IsSuccess) {
-                    _this.hospitalInfos.hospitalName.name = body.Name;
-                    _this.hospitalInfos.hospitalDesc = body.Description;
-                    _this.hospitalInfos.hospitalAbbr = body.ShortCode;
-                    _this.hospitalInfos.contactName.name = body.ContactInfo.ContactPerson;
-                    _this.hospitalInfos.contactAddress = body.ContactInfo.Address;
-                    _this.hospitalInfos.contactMethod1 = body.ContactInfo.ContactWay1;
-                    _this.hospitalInfos.contactMethod2 = body.ContactInfo.ContactWay2;
-                    _this.hospitalInfos.contactMethod3 = body.ContactInfo.ContactWay3;
-                    _this.hospitalInfos.contactMethod4 = body.ContactInfo.ContactWay4;
-                    _this.hospitalInfos.hostipalId =  body.Id;
+                    _this.vendorInfos.vendorName.name = body.Name;
+                    _this.vendorInfos.vendorDesc = body.Description;
+                    _this.vendorInfos.vendorAbbr = body.ShortCode;
+                    _this.vendorInfos.contactName.name = body.ContactInfo.ContactPerson;
+                    _this.vendorInfos.contactAddress = body.ContactInfo.Address;
+                    _this.vendorInfos.contactMethod1 = body.ContactInfo.ContactWay1;
+                    _this.vendorInfos.contactMethod2 = body.ContactInfo.ContactWay2;
+                    _this.vendorInfos.contactMethod3 = body.ContactInfo.ContactWay3;
+                    _this.vendorInfos.contactMethod4 = body.ContactInfo.ContactWay4;
+                    _this.vendorInfos.hostipalId =  body.Id;
                };                
               }, response => {
                 // error callback
               });
     },
     //申请产品，获取申请单位列表和产品列表 
-    applypProduct(id){
+    vendorProduct(id){
         var _this = this;
-
-        this.$http.get('./static/applyProduct.json',{params:{id:id}}).then(response => {
-            var data = response.body;
-              if (data.applystatus) {
-                _this.applyProduct = data.applyProduct;
-              };
-              }, response => {
+        var url = this.GLOBAL.hostIp;
+        this.$http.post(url+'/VendorSetting/JsonVendorProducts',{"id":id},{emulateJSON: true,credentials: true}).then(response => {
+            var body = response.body;
+              if (body.isSuccess) {
+                _this.vendorProducts = body.data;
+                _this.currentVendorId = id;
+              }}, response => {
                 // error callback
               });
-    },
-    
-    //审核产品列表
-    auditingProduct(id){
-        var _this = this;
-        this.$http.get('./static/auditingProduct.json',{params:{id:id}}).then(response => {            
-              var data = response.body;
-              if (data.auditingStasus) {
-                _this.auditingProducts.auditingHostipals = data.auditingHostipals;
-              };
+    },  
+    vendorHospital(id){
+         var _this = this; 
+        var url = this.GLOBAL.hostIp;
+              this.$http.post(url+"/VendorSetting/JsonVendorHospitals",{"id":id},{emulateJSON: true,credentials: true}).then(response => {               
+                // get body data                    
+                var body = response.body;
+                if (body.isSuccess) {
+                    _this.vendorHospitalInfo = body.data;
+                } else{};        
+                       
               }, response => {
                 // error callback
-                console.log("error")
-              });
-    },
-    //审核产品，获取对应供应商提供的产品
-    applyList(){
-        var val = $(event.currentTarget).val();
-        var _this = this;
-        this.$http.get('./static/auditingProduct.json',{params:{val:val}}).then(response => {            
-              var data = response.body;
-              if (data.auditingStasus) {
-                _this.auditingProducts.auditingProducts = data.auditingProducts;
-              };
-              }, response => {
-                // error callback
-                console.log("error")
               });
     },
      goto:function(index){
@@ -291,12 +265,13 @@ export default {
             this.current = index;
            // 发送页面请求
         }
+    
   }
 }
 </script>
 
 <style>
-#hospitalList {
+#vendorList {
   text-align: left;
 }
 .hostipal .dropdown-menu{
@@ -319,17 +294,17 @@ export default {
   text-align: right;
   padding-right: 0;
  }
- #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo, #receipts{
+ #vendorInfo, #contactInfo, #vendorProductInfo, #auditingProductsModal, #vendorHospitalsInfo, #editVendorInfo, #receipts{
   text-align: left;
  }
- #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row{
+ #contactInfo .form-inline>.row, #vendorInfo .form-inline>.row, #vendorProductInfo .form-inline>.row, #vendorHospitalsInfo .form-inline>.row, #editVendorInfo .form-inline>.row{
   margin-bottom: 5px;
   line-height: 30px;
  }
  .require-label{
   color: red;
  }
- #hospitalInfo .form-control,#hospitalProductsInfo .form-control, #formApproveList .form-control, #edithospitalInfo .form-control{
+ #vendorInfo .form-control,#vendorProductInfo .form-control, #vendorHospitalsInfo .form-control, #editVendorInfo .form-control{
   width: 100%;
  }
  #contactInfo .form-control-static{

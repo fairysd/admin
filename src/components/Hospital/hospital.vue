@@ -46,7 +46,7 @@
                                         <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.id)">审核产品</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList" @click="approveList(item.id)">审核列表</a>
+                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList" @click="approveListAll(item.id)">审核列表</a>
                                     </li>
                                 </ul>
                             </div>
@@ -135,7 +135,8 @@ export default {
       systemFunctionsInfos:[],
       receiptModel:[],
       auditingProductsId:"",
-      applyProductHospitalId:""
+      applyProductHospitalId:"",
+      approveList:[]
     }
   },
    computed:{
@@ -299,12 +300,14 @@ export default {
               });
     },   
     //审核产品，获取对应供应商提供的产品
-    approveList(id){
+    approveListAll(id){
         var _this = this;
         var url = this.GLOBAL.hostIp;
         this.$http.post(url+"/HospitalSetting/JsonFormApproveList",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {            
               var body = response.body;
-              
+              if (body.isSuccess) {
+                  _this.approveList = body.data.auditForms;
+              } else{};
               }, response => {
                 // error callback
                 console.log("error")

@@ -15,7 +15,7 @@
                                     <label class="control-label">联系人</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactName.name"></p>
+                                    <p class="form-control-static" v-text="$parent.$data.vendorInfos.contactName.name"></p>
                                 </div>
                             </div>
                             <div class="row">
@@ -23,7 +23,7 @@
                                     <label class="control-label">地址</label>
                                 </div>
                                 <div class="col-sm-10">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactAddress"></p>
+                                    <p class="form-control-static" v-text="$parent.$data.vendorInfos.contactAddress"></p>
                                 </div>
                             </div>
                             <div class="row">
@@ -31,13 +31,13 @@
                                     <label class="control-label">联系方式1</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactMethod1"></p>
+                                    <p class="form-control-static" v-text="$parent.$data.vendorInfos.contactMethod1"></p>
                                 </div>
                                 <div class="col-sm-2">
                                     <label class="control-label">联系方式2</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactMethod2"></p>
+                                    <p class="form-control-static" v-text="$parent.$data.vendorInfos.contactMethod2"></p>
                                 </div>
                             </div>
                             <div class="row">
@@ -45,13 +45,13 @@
                                     <label class="control-label">联系方式3</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactMethod3"></p>
+                                    <p class="form-control-static" v-text="$parent.$data.vendorInfos.contactMethod3"></p>
                                 </div>
                                 <div class="col-sm-2">
                                     <label class="control-label">联系方式4</label>
                                 </div>
                                 <div class="col-sm-4">
-                                    <p class="form-control-static" v-text="this.$parent.$data.hospitalInfos.contactMethod4"></p>
+                                    <p class="form-control-static" v-text="$parent.$data.vendorInfos.contactMethod4"></p>
                                 </div>
                             </div>
                         </div>
