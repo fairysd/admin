@@ -70,13 +70,15 @@ export default {
         //验证必填框是否填写      
         var _this = this;
         var url = this.GLOBAL.hostIp;   
-        var hospitalList =  $("#selected option").attr("id")         
-        console.log(hospitalList)
+        var hospitalList =  $("#selected option");
+        var hospitalListId= []
+        for (var i = 0; i < hospitalList.length; i++) {
+            hospitalListId.push($(hospitalList[i]).attr("value"))
+        };
         // eslint-disable-next-line
       var data = {
             VendorId:_this.$parent.$data.vendorHospitalInfo.vendorId,
-            hospitalList
-            
+            hospitals:hospitalListId            
          }         
          // 发送http请求
          this.$http.post(url+"/VendorSetting/SaveVendorHospitals",data,{emulateJSON: true,credentials: true}).then(response => {
@@ -84,7 +86,7 @@ export default {
               }, response => {
                 // error callback
               });
-      $("#hospitalProductsInfo").modal("toggle")
+      $("#vendorHospitalsInfo").modal("toggle")
       
          //
          

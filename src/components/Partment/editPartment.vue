@@ -125,8 +125,8 @@ export default {
         // eslint-disable-next-line
                     var data = {
                       Name:_this.partmentModel.name.name,
-                      Description:_this.partmentModel.hospitalDesc,
-                      ShortCode:_this.partmentModel.hospitalAbbr,
+                      Description:_this.partmentModel.desc,
+                      ShortCode:_this.partmentModel.abbr,
                       ReceiptId:_this.partmentModel.tickets.name,
                       Type:_this.partmentModel.type,
                       ContactInfo:{
@@ -137,10 +137,11 @@ export default {
                           ContactWay3:_this.partmentModel.contactMethod3,
                           ContactWay4:_this.partmentModel.contactMethod4,
                       },          
-                      RootId:_this.partmentModel.hostipalId       
+                      RootId:_this.partmentModel.hostipalId,
+                      id:_this.partmentModel.id  
                   };
                      this.$http.post(url+'/HospitalSetting/SaveHospitalUnit',data,{emulateJSON: true,credentials: true}).then(response => {
-                        alert("修改成功")
+                       
                     },response => {
                             // error callback
                             console.log("请求已经发送")

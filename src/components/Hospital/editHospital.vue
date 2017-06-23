@@ -92,7 +92,7 @@ export default {
   methods:{
     //添加医院
      applyEdithospital(){       
-
+        var _this = this;
         var url = this.GLOBAL.hostIp;
         //验证必填框是否填写      
         this.$validator.validateAll().then(() => {
@@ -111,10 +111,10 @@ export default {
           },         
           Id:this.$parent.$data.hospitalInfos.hostipalId       
       };
-        this.$http.post(url+"/HospitalSetting/Hospitalsave",data,{emulateJSON: true}).then(response => {
+        this.$http.post(url+"/HospitalSetting/Save",data,{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
-            if (body.isSuccess) {
-                alert("修改成功")
+            if (body.isSuccess) {               
+               this.$router.push(this.$route.path)
             };
         },response => {
                 // error callback

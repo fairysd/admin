@@ -243,6 +243,7 @@ $("#hospitalUnitInfo").modal("toggle")
                     _this.partmentModel.hostipalId =  editinfo.rootId;
                     _this.partmentModel.tickets.name = editinfo.receipt.id;
                     _this.partmentModel.type = editinfo.type;
+                    _this.partmentModel.id = editinfo.id;
 
                };                
               }, response => {

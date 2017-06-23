@@ -32,13 +32,12 @@ export default {
   //  根据登陆角色，获取该角色操作权限
     var _this = this;
     var url = this.GLOBAL.hostIp;
-      this.$http.post(url+'/UserInfo/UserPrivilege',{},{emulateJSON: true,credentials: true}).then(response => {               
+      this.$http.post(url+'/Main/JsonMenus',{},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                                  
                 var _this = this;
                 var body = response.body;   
                 if (body.isSuccess) {  
-                  var userType = body.data.user;
-                  var name = userType.user_Account;
+                  var name = body.data.loginInfo.userName;
                  _this.username = name;
                 }
               }, response => {

@@ -27,7 +27,7 @@
                         <td v-text="item.shortCode"></td>
                         <td>
                             <div class="btn-group">
-                                <a href="#" class="btn btn-primary contactInfo" data-toggle="modal" data-target="#contactInfo" v-bind:hostipalId="item.id" v-on:click="displayContactInfo(item.contactId)">联系信息</a>
+                                <a href="#" class="btn btn-primary contactInfo" data-toggle="modal" data-target="#contactInfo" v-bind:hostipalId="item.id" v-on:click="displayContactInfo(item.contactId,item.name)">联系信息</a>
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="caret"></span>
                                     <span class="sr-only">Toggle Dropdown</span>
@@ -37,16 +37,16 @@
                                         <a href="#" data-target="#edithospitalInfo" data-toggle="modal" class="edit" @click="editHospital(item.id)">编辑</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#receipts" data-toggle="modal" class="receipts" @click="receipts(item.id)">发票信息</a>
+                                        <a href="#" data-target="#receipts" data-toggle="modal" class="receipts" @click="receipts(item.id,item.name)">发票信息</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#hospitalProductsInfo" data-toggle="modal" class="products" @click="applypProduct(item.id)">申请产品</a>
+                                        <a href="#" data-target="#hospitalProductsInfo" data-toggle="modal" class="products" @click="applypProduct(item.id,item.name)">申请产品</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.id)">审核产品</a>
+                                        <a href="#" data-target="#auditingProductsModal" data-toggle="modal" class="auditing" @click="auditingProduct(item.id,item.name)">审核产品</a>
                                     </li>
                                     <li>
-                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList" @click="approveListAll(item.id)">审核列表</a>
+                                        <a href="#" data-target="#formApproveList" data-toggle="modal" class="approveList" @click="approveListAll(item.id,item.name)">审核列表</a>
                                     </li>
                                 </ul>
                             </div>
@@ -103,7 +103,8 @@ export default {
   components: {addHospital,editHospital,contactInfo,receipts,applyProduct,auditingProduct,approveList,relativeHospital},
   data () {
     return {
-      isAdmin:"",
+      currentHospital:"",
+      currentHospitalId:"",
       current:"",
       showItem:"",
       allpage:"",
@@ -136,7 +137,11 @@ export default {
       receiptModel:[],
       auditingProductsId:"",
       applyProductHospitalId:"",
-      approveList:[]
+      approveList:[],
+      addReceiptsModel:{
+            title:"",
+            tax:""
+        }
     }
   },
    computed:{
@@ -177,16 +182,7 @@ export default {
              //  alert("长时间未操作，请重新登陆")
              //  this.$router.push('/login')
              // };
-              });
-         this.$http.post(url+'/Main/JsonMenus',{},{emulateJSON: true,credentials:true}).then(response => {               
-                // get body data                                  
-                var _this = this;
-                var body = response.body;   
-                if (body.isSuccess) {  
-                this.isAdmin = body.data.loginInfo.isAdmin;
-                };
-                
-              })
+              });    
     
 
   },
@@ -213,9 +209,10 @@ export default {
       }
     },
     //联系信息，发送医院id获取该医院联系信息并展现
-    displayContactInfo(id){
+    displayContactInfo(id,name){
         var _this = this; 
         var url = this.GLOBAL.hostIp;
+        _this.currentHospital = name;
               this.$http.post(url+"/HospitalSetting/GetContactInfo",{"id":id},{emulateJSON: true,credentials: true}).then(response => {               
                 // get body data                    
                 var data = response.body;        
@@ -225,6 +222,7 @@ export default {
                     _this.hospitalInfos.contactMethod2= data.ContactWay1;
                     _this.hospitalInfos.contactMethod3= data.ContactWay1;
                     _this.hospitalInfos.contactMethod4= data.ContactWay1;      
+
               }, response => {
                 // error callback
               });
@@ -268,9 +266,10 @@ export default {
               });
     },
     //申请产品，获取申请单位列表和产品列表 
-    applypProduct(id){
+    applypProduct(id,name){
       var _this = this;
       var url = this.GLOBAL.hostIp;
+      this.currentHospital = name;
        this.$http.post(url+"/HospitalSetting/JsonHospitalProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
             if (body.isSuccess) {
@@ -283,9 +282,10 @@ export default {
     },
     
     //审核产品列表
-    auditingProduct(id){
+    auditingProduct(id,name){
         this.auditingProducts = [];
         var _this = this;
+        this.currentHospital = name;
         var url = this.GLOBAL.hostIp;
         this.$http.post(url+"/HospitalSetting/JsonAuditingProducts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
             var body = response.body;
@@ -300,8 +300,9 @@ export default {
               });
     },   
     //审核产品，获取对应供应商提供的产品
-    approveListAll(id){
+    approveListAll(id,name){
         var _this = this;
+        this.currentHospital = name;
         var url = this.GLOBAL.hostIp;
         this.$http.post(url+"/HospitalSetting/JsonFormApproveList",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {            
               var body = response.body;
@@ -314,14 +315,20 @@ export default {
               });
     },
     //根据医院id获取票据信息
-    receipts(id){
+    receipts(id,name){
       var url = this.GLOBAL.hostIp;
+      this.currentHospital = name;
       var _this = this;
-        this.$http.post(url+"/HospitalSetting/Receipts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
+      this.addReceiptsModel ={
+            title:"",
+            tax:""
+        }
+        this.$http.post(url+"/HospitalSetting/JsonReceipts",{hospitalId:id},{emulateJSON: true,credentials: true}).then(response => {
           var body = response.body;
           if (body.isSuccess) {
             var data = body.data;
             _this.receiptModel = data.receipts;
+            _this.currentHospitalId = data.hospitalId;
           };
       })
     },
@@ -377,7 +384,7 @@ export default {
  #hospitalInfo, #contactInfo, #hospitalProductsInfo, #auditingProductsModal, #formApproveList, #edithospitalInfo, #receipts, #systemFunctionsInfo{
   text-align: left;
  }
- #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row #systemFunctionsInfo .form-inline>.row{
+ #contactInfo .form-inline>.row, #hospitalInfo .form-inline>.row, #hospitalProductsInfo .form-inline>.row, #formApproveList .form-inline>.row, #edithospitalInfo .form-inline>.row, #systemFunctionsInfo .form-inline>.row{
   margin-bottom: 5px;
   line-height: 30px;
  }
